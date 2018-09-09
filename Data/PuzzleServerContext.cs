@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Data.DataModel.AuthModel;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ServerCore.DataModel;
@@ -43,6 +44,11 @@ namespace ServerCore.Models
                     context.Database.Migrate();
                 }
             }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AspNetUserLogins>().HasKey(l => new { l.LoginProvider, l.ProviderKey });
         }
     }
 }
