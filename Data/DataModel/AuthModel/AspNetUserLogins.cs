@@ -21,7 +21,7 @@ namespace Data.DataModel.AuthModel
         // No max length, required
         // Original has a string for the id, 
         // not sure if it can handle the user link or if I need to get a specific foreign key to the id as a string
-        public User User { get; set; }
+        public virtual User User { get; set; }
     }
 
     // Table creation code from the template for reference
