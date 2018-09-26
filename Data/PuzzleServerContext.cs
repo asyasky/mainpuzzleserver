@@ -31,6 +31,7 @@ namespace ServerCore.Models
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamMembers> TeamMembers { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
 
         public static void UpdateDatabase(IApplicationBuilder app)
         {
