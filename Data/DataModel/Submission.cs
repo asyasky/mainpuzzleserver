@@ -9,7 +9,7 @@ namespace ServerCore.DataModel
         public int ID { get; set; }
         public virtual Puzzle Puzzle { get; set; }
         public virtual Team Team { get; set; }
-        public virtual User Submitter { get; set; }
+        public virtual PuzzleUser Submitter { get; set; }
         public DateTime TimeSubmitted { get; set; }
         public string SubmissionText { get; set; }
         public virtual Response Response { get; set; }
