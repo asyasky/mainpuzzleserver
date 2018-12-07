@@ -16,6 +16,17 @@ namespace ServerCore
             Configuration = configuration;
         }
 
+        public Startup(IHostingEnvironment env)
+        {
+            // Set up to use Azure settings
+            IConfigurationBuilder configBuilder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            Configuration = configBuilder.Build();
+        }
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -29,6 +40,9 @@ namespace ServerCore
                     options.Conventions.AuthorizeFolder("/Shared");
                     options.Conventions.AuthorizeFolder("/Teams");
                 });
+
+            //I don't know if this duplicated the context add below it, need to check
+          //  DeploymentConfiguration.ConfigureDatabase(Configuration, services);
 
             services.AddDbContext<PuzzleServerContext>
                 (options => options.UseLazyLoadingProxies()
