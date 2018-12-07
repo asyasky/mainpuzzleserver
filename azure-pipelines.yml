@@ -11,6 +11,8 @@ variables:
 
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
+# I don't know which one of these is working (if either)
+#- script: dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
   displayName: 'dotnet build $(buildConfiguration)'
 - task: DotNetCoreCLI@2
   inputs:
