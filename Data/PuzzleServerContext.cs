@@ -28,6 +28,7 @@ namespace ServerCore.DataModel
         public DbSet<Response> Responses { get; set; }
         public DbSet<Submission> Submissions { get; set; }
         public DbSet<Team> Teams { get; set; }
+        public DbSet<TeamApplication> TeamApplications { get; set; }
         public DbSet<TeamMembers> TeamMembers { get; set; }
         public DbSet<PuzzleUser> PuzzleUsers { get; set; }
         public DbSet<Hint> Hints { get; set; }
@@ -56,6 +57,7 @@ namespace ServerCore.DataModel
             modelBuilder.Entity<ContentFile>().HasIndex(contentFile => new { contentFile.EventID, contentFile.ShortName }).IsUnique();
             modelBuilder.Entity<PuzzleStatePerTeam>().HasKey(state => new { state.PuzzleID, state.TeamID });
             modelBuilder.Entity<HintStatePerTeam>().HasKey(state => new { state.TeamID, state.HintID });
+            modelBuilder.Entity<Event>().HasIndex(eventObj => new { eventObj.UrlString }).IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,12 +1,24 @@
-@page  "/{eventId}/{eventRole}/Puzzles/Feedback/{id}"
+@page  "/{eventId}/{eventRole}/Puzzles/Feedback/{puzzleId}"
 @model ServerCore.Pages.Puzzles.FeedbackModel
 
 @{
-    ViewData["Title"] = "Feedback";
-    var id = ViewContext.RouteData.Values["id"];
+    ViewData["Title"] = "Puzzle feedback";
+    ViewData["AdminRoute"] = "../Puzzles/Feedback";
+    ViewData["AuthorRoute"] = "../Puzzles/Feedback";
+    ViewData["PlayRoute"] = "../Puzzles/SubmitFeedback";
+    ViewData["RoutingPuzzleId"] = ViewContext.RouteData.Values["puzzleId"];
+    Layout = "_puzzleManagementLayout.cshtml";
 }
 
-<h2>Feedback for @Html.DisplayFor(model => model.Puzzle.Name)</h2>
+<h2>@Html.DisplayFor(model => model.Puzzle.Name): Feedback</h2>
+
+<div>
+    <h3><b>Avg Fun Rating:</b> @Model.FunScore</h3>
+    <br>
+    <h3><b>Avg Difficulty Rating:</b> @Model.DiffScore</h3>
+</div>
+
+<br>
 
 <table class="table">
     <thead>
@@ -50,7 +62,3 @@
 }
     </tbody>
 </table>
-
-<div>
-    <a asp-page="./Index">Back to Puzzles</a>
-</div>

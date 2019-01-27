@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,13 +34,20 @@ namespace ServerCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                                 .RequireAuthenticatedUser()
+                                 .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+            })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             services.AddMvc()
                 .AddRazorPagesOptions(options =>
                 {
-                    options.Conventions.AuthorizeFolder("/Events");
-                    options.Conventions.AuthorizeFolder("/Puzzles");
-                    options.Conventions.AuthorizeFolder("/Shared");
-                    options.Conventions.AuthorizeFolder("/Teams");
+                    options.Conventions.AuthorizeFolder("/Pages");
+                    options.Conventions.AuthorizeFolder("/ModelBases");
                 });
 
             //I don't know if this duplicated the context add below it, need to check
@@ -64,6 +73,7 @@ namespace ServerCore
                 options.AddPolicy("PlayerIsOnTeam", policy => policy.Requirements.Add(new PlayerIsOnTeamRequirement()));
                 options.AddPolicy("IsAuthorOfPuzzle", policy => policy.Requirements.Add(new IsAuthorOfPuzzleRequirement()));
                 options.AddPolicy("IsEventAdminOrEventAuthor", policy => policy.Requirements.Add(new IsEventAdminOrEventAuthorRequirement()));
+                options.AddPolicy("IsEventAdminOrPlayerOnTeam", policy => policy.Requirements.Add(new IsEventAdminOrPlayerOnTeamRequirement()));
                 options.AddPolicy("IsEventAdminOrAuthorOfPuzzle", policy => policy.Requirements.Add(new IsEventAdminOrAuthorOfPuzzleRequirement()));
                 options.AddPolicy("IsRegisteredForEvent", policy => policy.Requirements.Add(new IsRegisteredForEventRequirement()));
             });
@@ -80,6 +90,8 @@ namespace ServerCore
             services.AddScoped<IAuthorizationHandler, IsEventAdminOrAuthorOfPuzzleHandler_Author>();
             services.AddScoped<IAuthorizationHandler, IsEventAdminOrEventAuthorHandler_Admin>();
             services.AddScoped<IAuthorizationHandler, IsEventAdminOrEventAuthorHandler_Author>();
+            services.AddScoped<IAuthorizationHandler, IsEventAdminOrPlayerOnTeamHandler_Admin>();
+            services.AddScoped<IAuthorizationHandler, IsEventAdminOrPlayerOnTeamHandler_Play>();
             services.AddScoped<IAuthorizationHandler, IsRegisteredForEventHandler_Admin>();
             services.AddScoped<IAuthorizationHandler, IsRegisteredForEventHandler_Author>();
             services.AddScoped<IAuthorizationHandler, IsRegisteredForEventHandler_Player>();

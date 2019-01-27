@@ -1,15 +1,22 @@
-﻿@page "/{eventId}/{eventRole}/Responses"
+﻿@page "/{eventId}/{eventRole}/Responses/{puzzleId}"
 @model ServerCore.Pages.Responses.IndexModel
 
 @{
     ViewData["Title"] = "Responses";
+    ViewData["AdminRoute"] = "../Responses/Index";
+    ViewData["AuthorRoute"] = "../Responses/Index";
+    // TODO: Needs to handle implicit teams - ViewData["PlayRoute"] = "../Submissions/Index";
+    ViewData["RoutingPuzzleId"] = ViewContext.RouteData.Values["puzzleId"];
+    Layout = "../Puzzles/_puzzleManagementLayout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>@Model.Puzzle.Name: Responses</h2>
 
 <p>
-    <a asp-page="Create" asp-route-puzzleId="@Model.PuzzleId">Create New</a>
+    <a asp-page="Create" asp-route-puzzleId="@Model.PuzzleId">Create New</a> |
+    <a asp-page="CreateBulk" asp-route-puzzleId="@Model.PuzzleId">Bulk Create</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -45,15 +52,11 @@
                 @Html.DisplayFor(modelItem => item.Note)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-page="./Edit" asp-route-puzzleId="@Model.PuzzleId" asp-route-id="@item.ID">Edit</a> |
+                <a asp-page="./Details" asp-route-puzzleId="@Model.PuzzleId" asp-route-id="@item.ID">Details</a> |
+                <a asp-page="./Delete" asp-route-puzzleId="@Model.PuzzleId" asp-route-id="@item.ID">Delete</a>
             </td>
         </tr>
         }
     </tbody>
 </table>
-
-<div>
-    <a asp-page="/Puzzles/Index">Back to Puzzle List</a>
-</div>

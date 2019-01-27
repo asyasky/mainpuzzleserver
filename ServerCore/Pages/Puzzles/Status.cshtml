@@ -1,11 +1,16 @@
-﻿@page "/{eventId}/{eventRole}/Puzzles/Status"
+﻿@page "/{eventId}/{eventRole}/Puzzles/Status/{puzzleId}"
 @model ServerCore.Pages.Puzzles.StatusModel
 
 @{
-    ViewData["Title"] = "Status";
+    ViewData["Title"] = "Puzzle status";
+    ViewData["AdminRoute"] = "../Puzzles/Status";
+    ViewData["AuthorRoute"] = "../Puzzles/Status";
+    ViewData["PlayRoute"] = "/Teams/Play";
+    ViewData["RoutingPuzzleId"] = ViewContext.RouteData.Values["puzzleId"];
+    Layout = "_puzzleManagementLayout.cshtml";
 }
 
-<h2>Puzzle Status for @Model.Puzzle.Name</h2>
+<h2>@Model.Puzzle.Name: Status</h2>
 
 <table class="table">
     <thead>
@@ -43,23 +48,23 @@
                 <td>
                     @if (item.UnlockedTime == null)
                     {
-                        <a asp-page-handler="UnlockState" asp-route-sort="@Model.Sort" asp-route-teamId="@item.Team.ID" asp-route-id="@Model.Puzzle.ID" asp-route-value="true" onclick="return confirm('Are you sure you want to mark @(item.Team.Name) as unlocked?')">Unlock</a>
+                        <a asp-page-handler="UnlockState" asp-route-sort="@Model.Sort" asp-route-teamId="@item.Team.ID" asp-route-puzzleid="@Model.Puzzle.ID" asp-route-value="true" onclick="return confirm('Are you sure you want to mark @(item.Team.Name) as unlocked?')">Unlock</a>
                     }
                     else
                     {
                         @Html.DisplayFor(modelItem => item.UnlockedTime)
-                        <a asp-page-handler="UnlockState" asp-route-sort="@Model.Sort" asp-route-teamId="@item.Team.ID" asp-route-id="@Model.Puzzle.ID" asp-route-value="false" onclick="return confirm('Are you sure you want to mark @(item.Team.Name) as locked?')"> X</a>
+                        <a asp-page-handler="UnlockState" asp-route-sort="@Model.Sort" asp-route-teamId="@item.Team.ID" asp-route-puzzleid="@Model.Puzzle.ID" asp-route-value="false" onclick="return confirm('Are you sure you want to mark @(item.Team.Name) as locked?')"> X</a>
                     }
                 </td>
                 <td>
                     @if (item.SolvedTime == null)
                     {
-                        <a asp-page-handler="SolveState" asp-route-sort="@Model.Sort" asp-route-teamId="@item.Team.ID" asp-route-id="@Model.Puzzle.ID" asp-route-value="true" onclick="return confirm('Are you sure you want to mark @(item.Team.Name) as solved?')">Solve</a>
+                        <a asp-page-handler="SolveState" asp-route-sort="@Model.Sort" asp-route-teamId="@item.Team.ID" asp-route-puzzleid="@Model.Puzzle.ID" asp-route-value="true" onclick="return confirm('Are you sure you want to mark @(item.Team.Name) as solved?')">Solve</a>
                     }
                     else
                     {
                         @Html.DisplayFor(modelItem => item.SolvedTime)
-                        <a asp-page-handler="SolveState" asp-route-sort="@Model.Sort" asp-route-teamId="@item.Team.ID" asp-route-id="@Model.Puzzle.ID" asp-route-value="false" onclick="return confirm('Are you sure you want to mark @(item.Team.Name) as unsolved?')"> X</a>
+                        <a asp-page-handler="SolveState" asp-route-sort="@Model.Sort" asp-route-teamId="@item.Team.ID" asp-route-puzzleid="@Model.Puzzle.ID" asp-route-value="false" onclick="return confirm('Are you sure you want to mark @(item.Team.Name) as unsolved?')"> X</a>
                     }
                 </td>
                 <td>
@@ -74,10 +79,10 @@
         <tr>
             <td></td>
             <td>
-                <a asp-page-handler="UnlockState" asp-route-sort="@Model.Sort" asp-route-id="@Model.Puzzle.ID" asp-route-value="true" onclick="return confirm('Are you sure you want to mark all teams as unlocked?')">Unlock All</a>
+                <a asp-page-handler="UnlockState" asp-route-sort="@Model.Sort" asp-route-puzzleid="@Model.Puzzle.ID" asp-route-value="true" onclick="return confirm('Are you sure you want to mark all teams as unlocked?')">Unlock All</a>
             </td>
             <td>
-                <a asp-page-handler="SolveState" asp-route-sort="@Model.Sort" asp-route-id="@Model.Puzzle.ID" asp-route-value="true" onclick="return confirm('Are you sure you want to mark all teams as solved?')">Solve All</a>
+                <a asp-page-handler="SolveState" asp-route-sort="@Model.Sort" asp-route-puzzleid="@Model.Puzzle.ID" asp-route-value="true" onclick="return confirm('Are you sure you want to mark all teams as solved?')">Solve All</a>
             </td>
             <td></td>
             <td></td>
@@ -85,16 +90,13 @@
         <tr>
             <td></td>
             <td>
-                <a asp-page-handler="UnlockState" asp-route-sort="@Model.Sort" asp-route-id="@Model.Puzzle.ID" asp-route-value="false" onclick="return confirm('Are you sure you want to mark all teams as locked?')">Lock All</a>
+                <a asp-page-handler="UnlockState" asp-route-sort="@Model.Sort" asp-route-puzzleid="@Model.Puzzle.ID" asp-route-value="false" onclick="return confirm('Are you sure you want to mark all teams as locked?')">Lock All</a>
             </td>
             <td>
-                <a asp-page-handler="SolveState" asp-route-sort="@Model.Sort" asp-route-id="@Model.Puzzle.ID" asp-route-value="false" onclick="return confirm('Are you sure you want to mark all teams as unsolved?')">Unsolve All</a>
+                <a asp-page-handler="SolveState" asp-route-sort="@Model.Sort" asp-route-puzzleid="@Model.Puzzle.ID" asp-route-value="false" onclick="return confirm('Are you sure you want to mark all teams as unsolved?')">Unsolve All</a>
             </td>
             <td></td>
             <td></td>
         </tr>
     </tbody>
 </table>
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>

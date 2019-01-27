@@ -1,19 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ServerCore.DataModel;
 using ServerCore.ModelBases;
 
 namespace ServerCore.Pages.Responses
 {
+    [Authorize(Policy = "IsEventAdminOrAuthorOfPuzzle")]
     public class CreateModel : EventSpecificPageModel
     {
-        private readonly ServerCore.DataModel.PuzzleServerContext _context;
-
-        public CreateModel(ServerCore.DataModel.PuzzleServerContext context)
+        public CreateModel(PuzzleServerContext serverContext, UserManager<IdentityUser> userManager) : base(serverContext, userManager)
         {
-            _context = context;
         }
 
         [BindProperty]
@@ -21,9 +21,12 @@ namespace ServerCore.Pages.Responses
 
         public int PuzzleId { get; set; }
 
-        public IActionResult OnGet(int puzzleId)
+        public Puzzle Puzzle { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int puzzleId)
         {
             PuzzleId = puzzleId;
+            Puzzle = await _context.Puzzles.Where(m => m.ID == puzzleId).FirstOrDefaultAsync();
             return Page();
         }
 
