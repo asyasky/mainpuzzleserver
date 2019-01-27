@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ServerCore.Areas.Deployment;
 using ServerCore.Areas.Identity.UserAuthorizationPolicy;
 using ServerCore.DataModel;
 
@@ -51,11 +52,11 @@ namespace ServerCore
                 });
 
             //I don't know if this duplicated the context add below it, need to check
-          //  DeploymentConfiguration.ConfigureDatabase(Configuration, services);
+            DeploymentConfiguration.ConfigureDatabase(Configuration, services);
 
-            services.AddDbContext<PuzzleServerContext>
-                (options => options.UseLazyLoadingProxies()
-                    .UseSqlServer(Configuration.GetConnectionString("PuzzleServerContext")));
+            //services.AddDbContext<PuzzleServerContext>
+            //    (options => options.UseLazyLoadingProxies()
+            //        .UseSqlServer(Configuration.GetConnectionString("PuzzleServerContext")));
 
             services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
             {
