@@ -36,19 +36,22 @@ namespace ServerCore.Pages.Pieces
 
             switch(Puzzle.PieceMetaUsage)
             {
+                // TODO: Metas are filtered out by looking at score.
+                // Ideally each puzzle would have a flag saying whether it counts or not, 
+                // but changing the database is more risk than we need right now.
                 case PieceMetaUsage.EntireEvent:
-                    solvedPuzzleCount = await _context.PuzzleStatePerTeam.Where(ps => ps.Team == team && ps.SolvedTime != null && ps.Puzzle.SolveValue >= 10).CountAsync();
+                    solvedPuzzleCount = await _context.PuzzleStatePerTeam.Where(ps => ps.Team == team && ps.SolvedTime != null && ps.Puzzle.SolveValue >= 10 && ps.Puzzle.SolveValue < 50).CountAsync();
                     break;
 
                 case PieceMetaUsage.GroupOnly:
-                    solvedPuzzleCount = await _context.PuzzleStatePerTeam.Where(ps => ps.Team == team && ps.SolvedTime != null && ps.Puzzle.SolveValue >= 10 && ps.Puzzle.Group == Puzzle.Group).CountAsync();
+                    solvedPuzzleCount = await _context.PuzzleStatePerTeam.Where(ps => ps.Team == team && ps.SolvedTime != null && ps.Puzzle.SolveValue >= 10 && ps.Puzzle.SolveValue < 50 && ps.Puzzle.Group == Puzzle.Group).CountAsync();
                     break;
 
                 default:
                     return NotFound("Puzzle does not support the simple meta view.");
             }
 
-            EarnedPieces = await _context.Pieces.Where(p => p.PuzzleID == puzzleId && p.ProgressLevel <= solvedPuzzleCount).OrderBy(p => p.ProgressLevel).ToListAsync();
+            EarnedPieces = await _context.Pieces.Where(p => p.PuzzleID == puzzleId && p.ProgressLevel <= solvedPuzzleCount).OrderBy(p => p.ProgressLevel).ThenBy(p => p.Contents).ToListAsync();
 
             return Page();
         }

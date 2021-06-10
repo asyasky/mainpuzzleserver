@@ -31,13 +31,15 @@ namespace ServerCore.Pages.Events
                 .Where(p => p.Event == Event && p.IsPuzzle)
                 .ToDictionaryAsync(p => p.ID, p => new { p.SolveValue, p.IsCheatCode, p.IsFinalPuzzle });
 
+            DateTime submissionEnd = Event.AnswerSubmissionEnd;
             var stateData = await PuzzleStateHelper.GetSparseQuery(_context, this.Event, null, null)
-                .Where(pspt => pspt.SolvedTime != null)
+                .Where(pspt => pspt.SolvedTime != null && pspt.SolvedTime <= submissionEnd)
                 .Select(pspt => new { pspt.PuzzleID, pspt.TeamID, pspt.SolvedTime })
                 .ToListAsync();
 
+            // Hide disqualified teams from the standings page.
             var teams = await _context.Teams
-                .Where(t => t.Event == Event)
+                .Where(t => t.Event == Event && t.IsDisqualified == false)
                 .ToListAsync();
 
             Dictionary<int, TeamStats> teamStats = new Dictionary<int, TeamStats>(teams.Count);
@@ -66,7 +68,7 @@ namespace ServerCore.Pages.Events
                 }
             }
 
-            var teamsFinal = teamStats.Values.OrderBy(t => t.FinalMetaSolveTime).ThenByDescending(t => t.Score).ThenBy(t => t.Team.Name).ToList();
+            var teamsFinal = teamStats.Values.OrderBy(t => t.FinalMetaSolveTime).ThenByDescending(t => t.Score).ThenByDescending(t => t.SolveCount).ThenBy(t => t.Team.Name).ToList();
 
             TeamStats prevStats = null;
             for (int i = 0; i < teamsFinal.Count; i++)
@@ -99,35 +101,47 @@ namespace ServerCore.Pages.Events
                     teamsFinal = teamsFinal.OrderByDescending(ts => ts.Team.Name).ToList();
                     break;
                 case SortOrder.PuzzlesAscending:
-                    teamsFinal = teamsFinal.OrderBy(ts => ts.SolveCount).ThenBy(ts => ts.Rank).ThenBy(ts => ts.Team.Name).ToList();
+                    teamsFinal = teamsFinal.OrderBy(ts => ts.SolveCount).ThenByDescending(ts => ts.Rank).ThenByDescending(ts => ts.Team.Name).ToList();
                     break;
                 case SortOrder.PuzzlesDescending:
-                    teamsFinal = teamsFinal.OrderByDescending(ts => ts.SolveCount).ThenByDescending(ts => ts.Rank).ThenByDescending(ts => ts.Team.Name).ToList();
+                    teamsFinal = teamsFinal.OrderByDescending(ts => ts.SolveCount).ThenBy(ts => ts.Rank).ThenBy(ts => ts.Team.Name).ToList();
                     break;
                 case SortOrder.ScoreAscending:
-                    teamsFinal = teamsFinal.OrderBy(ts => ts.Score).ThenBy(ts => ts.Rank).ThenBy(ts => ts.Team.Name).ToList();
+                    teamsFinal = teamsFinal.OrderBy(ts => ts.Score).ThenByDescending(ts => ts.Rank).ThenByDescending(ts => ts.Team.Name).ToList();
                     break;
                 case SortOrder.ScoreDescending:
-                    teamsFinal = teamsFinal.OrderByDescending(ts => ts.Score).ThenByDescending(ts => ts.Rank).ThenByDescending(ts => ts.Team.Name).ToList();
+                    teamsFinal = teamsFinal.OrderByDescending(ts => ts.Score).ThenBy(ts => ts.Rank).ThenBy(ts => ts.Team.Name).ToList();
+                    break;
+                case SortOrder.HintsEarnedAscending:
+                    teamsFinal = teamsFinal.OrderBy(ts => ts.Team.HintCoinsEarned).ThenByDescending(ts => ts.Rank).ThenByDescending(ts => ts.Team.Name).ToList();
+                    break;
+                case SortOrder.HintsEarnedDescending:
+                    teamsFinal = teamsFinal.OrderByDescending(ts => ts.Team.HintCoinsEarned).ThenBy(ts => ts.Rank).ThenBy(ts => ts.Team.Name).ToList();
                     break;
                 case SortOrder.HintsUsedAscending:
-                    teamsFinal = teamsFinal.OrderBy(ts => ts.Team.HintCoinsUsed).ThenBy(ts => ts.Rank).ThenBy(ts => ts.Team.Name).ToList();
+                    teamsFinal = teamsFinal.OrderBy(ts => ts.Team.HintCoinsUsed).ThenByDescending(ts => ts.Rank).ThenByDescending(ts => ts.Team.Name).ToList();
                     break;
                 case SortOrder.HintsUsedDescending:
-                    teamsFinal = teamsFinal.OrderByDescending(ts => ts.Team.HintCoinsUsed).ThenByDescending(ts => ts.Rank).ThenByDescending(ts => ts.Team.Name).ToList();
+                    teamsFinal = teamsFinal.OrderByDescending(ts => ts.Team.HintCoinsUsed).ThenBy(ts => ts.Rank).ThenBy(ts => ts.Team.Name).ToList();
                     break;
             }
 
             this.Teams = teamsFinal;
         }
 
-        public SortOrder? SortForColumnLink(SortOrder ascendingSort, SortOrder descendingSort)
+        /// <summary>
+        /// Set up the proper sort for the link in a column header.
+        /// </summary>
+        /// <param name="standardSort">The sort you'll get for the first click on that column header</param>
+        /// <param name="reverseSort">The sort you'll get for the second click on that column header</param>
+        /// <returns></returns>
+        public SortOrder? SortForColumnLink(SortOrder standardSort, SortOrder reverseSort)
         {
-            SortOrder result = ascendingSort;
+            SortOrder result = standardSort;
 
             if (result == (this.Sort ?? DefaultSort))
             {
-                result = descendingSort;
+                result = reverseSort;
             }
 
             if (result == DefaultSort)
@@ -158,6 +172,8 @@ namespace ServerCore.Pages.Events
             PuzzlesDescending,
             ScoreAscending,
             ScoreDescending,
+            HintsEarnedAscending,
+            HintsEarnedDescending,
             HintsUsedAscending,
             HintsUsedDescending
         }

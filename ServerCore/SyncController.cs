@@ -329,7 +329,7 @@ namespace ServerCore.Pages
           
           try {
               var sqlCommand = "UPDATE Annotations SET Version = Version + 1, Contents = @Contents, Timestamp = @Timestamp WHERE PuzzleID = @PuzzleID AND TeamID = @TeamID AND [Key] = @Key";
-              int result = await context.Database.ExecuteSqlCommandAsync(sqlCommand,
+              int result = await context.Database.ExecuteSqlRawAsync(sqlCommand,
                                                                          new SqlParameter("@Contents", contents),
                                                                          new SqlParameter("@Timestamp", DateTime.Now),
                                                                          new SqlParameter("@PuzzleID", puzzleId),
@@ -360,7 +360,7 @@ namespace ServerCore.Pages
             if (existingAnnotation != null)
             {
                 context.Entry(existingAnnotation).State = EntityState.Detached;
-                UpdateOneAnnotation(response, puzzleId, teamId, key, contents);
+                await UpdateOneAnnotation(response, puzzleId, teamId, key, contents);
             }
             else
             {
@@ -382,7 +382,7 @@ namespace ServerCore.Pages
                     // doesn't think the annotation is in the database.
     
                     context.Entry(annotation).State = EntityState.Detached;
-                    UpdateOneAnnotation(response, puzzleId, teamId, key, contents);
+                    await UpdateOneAnnotation(response, puzzleId, teamId, key, contents);
                 }
             }
         }
@@ -562,11 +562,6 @@ namespace ServerCore.Pages
                 }
             }
 
-            // Start doing a sync asynchronously while we download the file contents.
-
-            var helper = new SyncHelper(context);
-            Task<Dictionary<string, object>> responseTask = helper.GetSyncResponse(currentEvent.ID, team.ID, puzzleId, null, 0, null, null, true);
-
             // Find the material file with the latest-alphabetically ShortName that contains the substring "client".
 
             var materialFile = await (from f in context.ContentFiles
@@ -578,12 +573,19 @@ namespace ServerCore.Pages
                 return Content("ERROR:  There's no sync client registered for this puzzle");
             }
 
+            var materialUrl = materialFile.Url;
+
+            // Start doing a sync asynchronously while we download the file contents.
+
+            var helper = new SyncHelper(context);
+            Task<Dictionary<string, object>> responseTask = helper.GetSyncResponse(currentEvent.ID, team.ID, puzzleId, null, 0, null, null, true);
+
             // Download that material file.
 
             string fileContents;
             using (var wc = new System.Net.WebClient())
             {
-                fileContents = await wc.DownloadStringTaskAsync(materialFile.Url);
+                fileContents = await wc.DownloadStringTaskAsync(materialUrl);
             }
 
             // Wait for the asynchronous sync we started earlier to complete, then serialize

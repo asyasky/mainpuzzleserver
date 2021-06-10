@@ -55,6 +55,18 @@ namespace ServerCore.DataModel
         public int HintCoinsUsed { get; set; }
 
         /// <summary>
+        /// The number of hint coins this team currently has earned since the event began
+        /// </summary>
+        [NotMapped]
+        public int HintCoinsEarned
+        {
+            get
+            {
+                return this.HintCoinCount + this.HintCoinsUsed;
+            }
+        }
+
+        /// <summary>
         /// Team bio for the signups page
         /// </summary>
         public string Bio { get; set; }
@@ -63,5 +75,12 @@ namespace ServerCore.DataModel
         /// Machine generated password for the autoinvite link
         /// </summary>
         public string Password { get; set; }
+
+        /// <summary>
+        /// Indicates whether or not the team is disqualified. Disqualified teams
+        /// can still view and solve puzzles; however, they are hidden from the
+        /// standings and fastest solves pages.
+        /// </summary>
+        public bool IsDisqualified { get; set; }
     }
 }
