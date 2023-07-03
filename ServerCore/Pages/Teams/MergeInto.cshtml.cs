@@ -79,6 +79,18 @@ namespace ServerCore.Pages.Teams
                     }
                 }
 
+                // combine team food orders (only updates items in the database, does not include merged team's default count)
+                IList<TeamLunch> lunches = await (from lunch in _context.TeamLunch
+                                 where lunch.TeamId == teamId
+                                 orderby lunch.ID
+                                 select lunch).ToListAsync();
+                
+                foreach(var lunch in lunches)
+                {
+                    lunch.TeamId = MergeIntoID;
+                    lunch.Team = mergeIntoTeam;
+                }
+
                 await TeamHelper.DeleteTeamAsync(_context, Team, sendEmail: false);
 
                 await _context.SaveChangesAsync();
