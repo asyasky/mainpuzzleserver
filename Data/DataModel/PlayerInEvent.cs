@@ -37,5 +37,11 @@ namespace ServerCore.DataModel
         /// The number of hint coins the player has used.
         /// </summary>
         public int HintCoinsUsed { get; set; }
+
+        /// <summary>
+        /// The class or category that the player falls into (classes are defined per event if used).
+        /// This is for player categories unique to an event (e.g. character class for an RPG event or region if relevant for an international event)
+        /// </summary>
+        public string PlayerCategory { get; set; }
     }
 }
