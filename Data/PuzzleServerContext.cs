@@ -90,6 +90,7 @@ namespace ServerCore.DataModel
             modelBuilder.Entity<Message>().HasIndex(message => message.SenderID);
             modelBuilder.Entity<Message>().HasIndex(message => message.TeamID);
             modelBuilder.Entity<Message>().HasIndex(message => message.PlayerID);
+            modelBuilder.Entity<PlayerClass>().Property(eventObj => eventObj.OnlyOnePerTeam).HasDefaultValue(true);
 
             // SQL doesn't allow multiple cacasding delete paths from one entity to another, so cut links that cause those
             // For more info, see https://learn.microsoft.com/en-us/ef/core/saving/cascade-delete
