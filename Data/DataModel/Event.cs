@@ -325,6 +325,17 @@ namespace ServerCore.DataModel
         public bool IsAlphaTestingEvent { get; set; }
 
         /// <summary>
+        /// True if the event uses the PlayerClass system to assign classes to individual players
+        /// PlayerClassName should also be set in this case, otherwise the display name will be "Player Class"
+        /// </summary>
+        public bool HasPlayerClasses { get; set; }
+
+        /// <summary>
+        /// Determines the display name for PlayerClasses (e.g. Class, Job, Color, Duty Assignment)
+        /// </summary>
+        public string PlayerClassName { get; set; }
+
+        /// <summary>
         /// Short-term hacks for modifying behavior without adding new properties all the time.
         /// Note: If a hack lasts more than a few months, it should probably be promoted to a real property.
         /// </summary>
