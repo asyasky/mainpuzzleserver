@@ -875,6 +875,9 @@ namespace Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("PlayerCategory")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PlayerId")
                         .HasColumnType("int");
 
