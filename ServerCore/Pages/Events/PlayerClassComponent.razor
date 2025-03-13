@@ -1,0 +1,36 @@
+﻿<h3>PlayerClassComponent</h3>
+
+<label>
+    Start typing a user name or email:
+    <form>
+        <input type="text" @oninput="OnFilterChanged" />
+    </form>
+</label>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in PlayerClasses)
+        {
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    <button @onclick="async () => await OnAddClick(item.ID)">Add</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
