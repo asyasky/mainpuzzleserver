@@ -333,7 +333,7 @@
                             <td>
                                 @if(Model.Event.HasPlayerClasses)
                                 {
-                                    //TODO: Whatever needs to happen to get the class into the model for the specific player (get it into Model.Members)
+                                    @item.Class.Name
                                 }
                             </td>
                             @if (Model.EventRole == ModelBases.EventRole.admin || Model.Event.IsTeamMembershipChangeActive)
@@ -358,6 +358,7 @@
                     }
                 </tbody>
             </table>
+
             @if (!Model.Event.IsTeamMembershipChangeActive)
             {
                 <div class="alert alert-danger" role="alert">
