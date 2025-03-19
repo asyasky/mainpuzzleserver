@@ -121,6 +121,18 @@ namespace ServerCore.Pages
         }
 
         [HttpPost]
+        [Authorize(Policy = "IsEventAdmin")]
+        [Route("api/puzzleapi/submitanswer/{eventId}/{puzzleId}/{userId}")]
+        public async Task<SubmissionResponse> PostSubmitAnswerAdminAsync([FromBody] AnswerSubmission submission, [FromRoute] string eventId, [FromRoute] int puzzleId, [FromRoute] string userId)
+        {
+            Event currentEvent = await EventHelper.GetEventFromEventId(context, eventId);
+
+            PuzzleUser user = await PuzzleUser.GetPuzzleUser(userId, context);
+
+            return await SubmissionEvaluator.EvaluateSubmission(context, user, currentEvent, puzzleId, submission.SubmissionText, submission.AllowFreeformSharing);
+        }
+
+        [HttpPost]
         [Route ("api/puzzleapi/liveevent/triggernotifications")]
         public async Task TriggerLiveEventNotifications(string eventId, int timerWindow)
         {

@@ -6,6 +6,7 @@ namespace ServerCore.DataModel
     /// <summary>
     /// Classes or categories that players can select as part of registration for the event
     /// These classes can be used for event flavor or to determine content shown to those players
+    /// One instance of each class is available per team (enforced based on ID)
     /// </summary>
     public class PlayerClass
     {
@@ -34,8 +35,8 @@ namespace ServerCore.DataModel
         public string Name { get; set; }
 
         /// <summary>
-        /// If true then only one player on the team can be this class
+        /// Relative order within the list of player classes (primarily used for ordering in UI)
         /// </summary>
-        public bool OnlyOnePerTeam { get; set; }
+        public int Order { get; set; }
     }
 }

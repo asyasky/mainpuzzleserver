@@ -44,7 +44,7 @@ namespace ServerCore.DataModel
         public DbSet<Message> Messages { get; set; }
         public DbSet<LiveEvent> LiveEvents { get; set; }
         public DbSet<LiveEventSchedule> LiveEventsSchedule { get; set; }
-        public DbSet<PlayerClass> PlayerClass { get; set; }
+        public DbSet<PlayerClass> PlayerClasses { get; set; }
 
         public static void UpdateDatabase(IApplicationBuilder app)
         {
@@ -90,7 +90,6 @@ namespace ServerCore.DataModel
             modelBuilder.Entity<Message>().HasIndex(message => message.SenderID);
             modelBuilder.Entity<Message>().HasIndex(message => message.TeamID);
             modelBuilder.Entity<Message>().HasIndex(message => message.PlayerID);
-            modelBuilder.Entity<PlayerClass>().Property(eventObj => eventObj.OnlyOnePerTeam).HasDefaultValue(true);
 
             // SQL doesn't allow multiple cacasding delete paths from one entity to another, so cut links that cause those
             // For more info, see https://learn.microsoft.com/en-us/ef/core/saving/cascade-delete
