@@ -1,36 +1,53 @@
-﻿<h3>PlayerClassComponent</h3>
+﻿@using ServerCore.DataModel
+<div class="row">
+    <div class="col-md-4">
+        <h3>Player Classes</h3>
 
-<label>
-    Start typing a user name or email:
-    <form>
-        <input type="text" @oninput="OnFilterChanged" />
-    </form>
-</label>
+        <input type="hidden" @bind="EventID" />
+        <div class="form-group">
+            <label>
+                Enter a name for this player class
+                <input @bind="ClassName" class="form-control" />
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                Enter the relative order for this class
+                <input @bind="ClassOrder" class="form-control" />
+            </label>
+        </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Email
-            </th>
-            <th>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in PlayerClasses)
-        {
-            <tr>
-                <td>
-                    @item.Name
-                </td>
-                <td>
-                    <button @onclick="async () => await OnAddClick(item.ID)">Add</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <button @onclick="async () => await OnAddClick()">Add</button>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Order
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in PlayerClasses)
+                {
+                    <tr>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            @item.Order
+                        </td>
+                        <td>
+                            <button @onclick="async () => await OnDeleteClick(item.ID)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>

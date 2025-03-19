@@ -162,6 +162,12 @@ namespace ServerCore.Pages.Teams
                 TeamRoom = $"{teamRoom.Building}/{teamRoom.Number}({teamRoom.Capacity})";
             }
 
+            // Get the PlayerClasses information if the event uses them
+            //TeamMembers itsMe = _context.TeamMembers.Where(t => t.Team == Team && t.Member == LoggedInUser).FirstOrDefault();
+            //itsMe.Class = _context.PlayerClasses.FirstOrDefault();
+            //await _context.SaveChangesAsync();
+            var availableClasses = GetAvailableClasses(_context, Event.ID, teamId);
+
             return Page();
         }
 
@@ -351,6 +357,17 @@ namespace ServerCore.Pages.Teams
             }
 
             return RedirectToPage("./Details", new { teamId = teamId });
+        }
+
+        private List<PlayerClass> GetAvailableClasses(PuzzleServerContext context, int eventId, int teamId)
+        {
+            var allClasses = context.PlayerClasses.Where(c => c.EventID == eventId);
+            var assignedClasses = context.TeamMembers.Where(tm => tm.Team.ID == teamId).Select(tm => tm.Class);
+            List<PlayerClass> unassignedClasses = allClasses.Except(assignedClasses).ToList();
+            return unassignedClasses;
+
+            // List<PlayerClass> classesOnTeam = context.TeamMembers.Where(u => u.ID == context.PlayerInEvent.Where(p => p.PlayerId == ))
+            //throw new NotImplementedException();
         }
     }
 }
