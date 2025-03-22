@@ -26,7 +26,6 @@ namespace ServerCore.DataModel
         /// The class or category that the player falls into (classes are defined per event if used).
         /// This is for player categories unique to an event (e.g. character class for an RPG event or region if relevant for an international event)
         /// </summary>
-       // [ForeignKey("PlayerClass.ID")]
         public virtual PlayerClass Class { get; set; }
     }
 }
