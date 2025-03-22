@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using ServerCore.DataModel;
 using ServerCore.Helpers;
 using ServerCore.ModelBases;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ServerCore.Pages.Teams
 {
@@ -51,6 +52,10 @@ namespace ServerCore.Pages.Teams
         public IList<TeamLunch> Lunches { get; set; }
         public string NewLunch { get; set; }
         public static string[] LunchOptions { get; set; }
+
+        public List<PlayerClass> AvailablePlayerClasses { get; set; }
+        public SelectList AvailablePlayerClassesSelectList { get; set; }
+        public int PlayerClassID {get; set;}
 
         private async Task<(bool passed, IActionResult redirect)> AuthChecks(int teamId)
         {
@@ -146,7 +151,7 @@ namespace ServerCore.Pages.Teams
                 SoftMaxLunches = (int)Math.Ceiling(possibleInPersonMembers / (double)PlayersPerLunch);
             }
             LunchOptions = (!string.IsNullOrWhiteSpace(Event.LunchOptions)) ? Event.LunchOptions.Split(";") : Array.Empty<string>();
-            for (int i = 0; i < LunchOptions.Length; i++) 
+            for (int i = 0; i < LunchOptions.Length; i++)
             {
                 // Note that the lunch details are not displayed for team lunches
                 // These options are also used in Swag\Register.cshtml, Event\Details.cshtml, and Player\Create and Edit.cshtml
@@ -162,11 +167,13 @@ namespace ServerCore.Pages.Teams
                 TeamRoom = $"{teamRoom.Building}/{teamRoom.Number}({teamRoom.Capacity})";
             }
 
-            // Get the PlayerClasses information if the event uses them
-            //TeamMembers itsMe = _context.TeamMembers.Where(t => t.Team == Team && t.Member == LoggedInUser).FirstOrDefault();
-            //itsMe.Class = _context.PlayerClasses.FirstOrDefault();
-            //await _context.SaveChangesAsync();
-            var availableClasses = GetAvailableClasses(_context, Event.ID, teamId);
+            // Pull PlayerClass data if the event uses it
+            if (Event.HasPlayerClasses)
+            {
+                // Get the PlayerClasses information for the available classes dropdown
+                AvailablePlayerClasses = await TeamHelper.GetAvailableClasses(_context, Event.ID, teamId);
+                AvailablePlayerClassesSelectList = new SelectList(AvailablePlayerClasses, nameof(PlayerClass.ID), nameof(PlayerClass.Name));
+            }
 
             return Page();
         }
@@ -346,9 +353,9 @@ namespace ServerCore.Pages.Teams
             }
 
             TeamLunch teamLunchToRemove = await (from teamLunch in _context.TeamLunch
-                                          where teamLunch.ID == lunchId &&
-                                          teamLunch.TeamId == teamId // the teamId check isn't necessary for finding the row, but prevents removing other teams' lunches
-                                          select teamLunch).SingleOrDefaultAsync();
+                                                 where teamLunch.ID == lunchId &&
+                                                 teamLunch.TeamId == teamId // the teamId check isn't necessary for finding the row, but prevents removing other teams' lunches
+                                                 select teamLunch).SingleOrDefaultAsync();
 
             if (teamLunchToRemove != null)
             {
@@ -357,17 +364,6 @@ namespace ServerCore.Pages.Teams
             }
 
             return RedirectToPage("./Details", new { teamId = teamId });
-        }
-
-        private List<PlayerClass> GetAvailableClasses(PuzzleServerContext context, int eventId, int teamId)
-        {
-            var allClasses = context.PlayerClasses.Where(c => c.EventID == eventId);
-            var assignedClasses = context.TeamMembers.Where(tm => tm.Team.ID == teamId).Select(tm => tm.Class);
-            List<PlayerClass> unassignedClasses = allClasses.Except(assignedClasses).ToList();
-            return unassignedClasses;
-
-            // List<PlayerClass> classesOnTeam = context.TeamMembers.Where(u => u.ID == context.PlayerInEvent.Where(p => p.PlayerId == ))
-            //throw new NotImplementedException();
         }
     }
 }

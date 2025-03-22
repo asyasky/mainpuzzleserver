@@ -68,6 +68,9 @@ namespace ServerCore.Pages.Teams
                 foreach (var member in members)
                 {
                     member.Team = mergeIntoTeam;
+
+                    // Adjust the PlayerClasses since there are likely to be duplicates
+                    await TeamHelper.AssignRandomPlayerClassFromAvailable(_context, member);
                 }
 
                 // also copy puzzle solves over

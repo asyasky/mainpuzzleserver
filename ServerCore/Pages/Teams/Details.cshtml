@@ -333,7 +333,9 @@
                             <td>
                                 @if(Model.Event.HasPlayerClasses)
                                 {
-                                    @item.Class.Name
+                                    <select asp-for="PlayerClassID" asp-items="@Model.AvailablePlayerClassesSelectList">
+                                        <option value="">Choose a player class</option>
+                                    </select>
                                 }
                             </td>
                             @if (Model.EventRole == ModelBases.EventRole.admin || Model.Event.IsTeamMembershipChangeActive)
@@ -349,7 +351,7 @@
                                     <td>
                                         @if (Model.EventRole != ModelBases.EventRole.play || !Model.Team.AutoTeamType.HasValue || item.Member == Model.LoggedInUser)
                                         {
-                                            <a asp-page-handler="RemoveMember" asp-route-teamId="@Model.Team.ID" asp-route-teamMemberId="@item.ID" onclick="return confirm('Are you sure you want to remove @item.Member.Name from @Model.Team.Name?')">Remove</a>
+                                            <a asp-page-handler="RemoveMember" asp-route-teamId="@Model.Team.ID" asp-route-teamMemberId="@item.ID" onclick="return confirm('Are you sure you want to remove @item.Member.Name from @Model.Team.Name?')">Remove Player</a>
                                         }
                                     </td>
                                 }
