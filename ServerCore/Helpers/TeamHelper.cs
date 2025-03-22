@@ -210,9 +210,16 @@ namespace ServerCore.Helpers
                                   select app;
             context.TeamApplications.RemoveRange(allApplications);
 
-            // If event has PlayerClasses: Assign the user the next available PlayerClass
+            // If event has PlayerClasses: Assign the user a random available PlayerClass
+            // This ensures that they have some class when the event starts
             // Better flow for picking their own class TBD
-            PlayerClass playerClass = await AssignPlayerClassToPlayer(context, Event, EventRole, teamId, userId);
+            PlayerClass playerClass = null;
+
+            if (Event.HasPlayerClasses)
+            {
+                playerClass = await GetRandomPlayerClassFromAvailable(context, Event.ID, teamId);
+                Member.Class = playerClass;
+            }
 
             context.TeamMembers.Add(Member);
             await TeamHelper.OnTeamMemberChange(context, team);
@@ -224,14 +231,14 @@ namespace ServerCore.Helpers
             {
                 if (playerClass != null)
                 {
-                    emailBody = string.Concat($"This event has assigned roles called {Event.PlayerClassName} for each player. " +
+                    emailBody = string.Concat($"This event has assigned a {Event.PlayerClassName} for each player. " +
                         $"You have been assigned the {Event.PlayerClassName} of {playerClass.Name}. " +
-                        $"To change this {Event.PlayerClassName} go to Event -> My Registration on the website. \r\n", emailBody);
+                        $"To change this {Event.PlayerClassName} go to Teams -> My Team on the website. \r\n", emailBody);
                 }
                 else
                 {
-                    emailBody = string.Concat($"This event has assigned roles called {Event.PlayerClassName} for each player. " +
-                        $"Please go to Event -> My Registration on the website to choose your {Event.PlayerClassName}!\r\n", emailBody);
+                    emailBody = string.Concat($"This event has assigned a {Event.PlayerClassName} for each player. " +
+                        $"Please go to Teams -> My Team on the website to choose your {Event.PlayerClassName}!\r\n", emailBody);
                 }
             }
 
@@ -354,7 +361,24 @@ namespace ServerCore.Helpers
             return newString.ToString();
         }
 
-        public static async Task<PlayerClass> AssignPlayerClassToPlayer(PuzzleServerContext context, Event Event, EventRole EventRole, int teamId, int userId)
+        /// <summary>
+        /// Get a list of the PlayerClasses that are unassigned for the give team
+        /// </summary>
+        /// <returns>A list of all unassigned PlayerClasses</returns>
+        public static async Task<List<PlayerClass>> GetAvailableClasses(PuzzleServerContext context, int eventId, int teamId)
+        {
+            var allClasses = await context.PlayerClasses.Where(c => c.EventID == eventId).ToListAsync();
+            var assignedClasses = await context.TeamMembers.Where(tm => tm.Team.ID == teamId).Select(tm => tm.Class).ToListAsync();
+            List<PlayerClass> unassignedClasses = allClasses.Except(assignedClasses).ToList();
+            return unassignedClasses;
+        }
+
+        /// <summary>
+        /// Gets a random PlayerClass from the classes that are currently unassigned on the team
+        /// This overload queries the database to find out which classes are available
+        /// </summary>
+        /// <returns>A single PlayerClass that has not been assigned to any players on the given team</returns>
+        public static async Task<PlayerClass> GetRandomPlayerClassFromAvailable(PuzzleServerContext context, int eventId, int teamId)
         {
             Team team = await context.Teams.FirstOrDefaultAsync(m => m.ID == teamId);
             if (team == null)
@@ -362,23 +386,57 @@ namespace ServerCore.Helpers
                 return null;
             }
 
-            PuzzleUser user = await context.PuzzleUsers.FirstOrDefaultAsync(m => m.ID == userId);
-            if (user == null)
+            List<PlayerClass> availableClasses = await GetAvailableClasses(context, eventId, teamId);
+            Random rand = new Random();
+            return availableClasses[rand.Next(availableClasses.Count - 1)];
+        }
+
+        /// <summary>
+        /// Gets a random PlayerClass from the classes that are currently unassigned on the team
+        /// This overload uses a local copy of the available classes instead of a database query
+        /// </summary>
+        /// <param name="availableClasses">A list of PlayerClasses that the function can choose from</param>
+        /// <returns>A single PlayerClass from the provided list</returns>
+        public static PlayerClass GetRandomPlayerClassFromAvailable(List<PlayerClass> availableClasses)
+        {
+            Random rand = new Random();
+            return availableClasses[rand.Next(availableClasses.Count - 1)];
+        }
+
+        /// <summary>
+        /// Assigns the current TeamMember a random PlayerClass from the classes that are currently unassigned on the team
+        /// This function will not assign a PlayerClass if the player already has a class selected and it is available on the given team
+        /// </summary>
+        /// <param name="member">The TeamMember who needs to be assigned a PlayerClass</param>
+        public static async Task AssignRandomPlayerClassFromAvailable(PuzzleServerContext context, TeamMembers member)
+        {
+            List<PlayerClass> availableClasses = await GetAvailableClasses(context, member.Team.EventID, member.Team.ID);
+
+            // Don't change their class if they already have one and no one else on the team does
+            // This is needed for team merging logic, to prevent changing the class the player picked unless necessary
+            if (member.Class == null || !availableClasses.Contains(member.Class))
             {
-                return null;
+                member.Class = GetRandomPlayerClassFromAvailable(availableClasses);
+            }
+        }
+
+        public static async Task<Tuple<bool, string>> SetPlayerClass(PuzzleServerContext context, Event currentEvent, EventRole role, TeamMembers member, PlayerClass playerClass)
+        {
+            if(currentEvent.EventHasStarted && role != EventRole.admin)
+            {
+                return new Tuple<bool, string>(false, $"The event has started and your {currentEvent.PlayerClassName} cannot be changed. Temporary overrides to your {currentEvent.PlayerClassName} can be made on the Team Details page.");
+            }
+            else
+            {
+                List<PlayerClass> availableClasses = await GetAvailableClasses(context, currentEvent.ID, member.Team.ID);
+
+                if (availableClasses.Contains(playerClass) && role != EventRole.admin)
+                {
+                    return new Tuple<bool, string>(false, $"Sorry, {playerClass.Name} is already assigned for this team. Please select another {currentEvent.PlayerClassName}!");
+                }
             }
 
-            //if (await (from teamMember in context.TeamMembers
-            //           where teamMember.Member == user &&
-            //           teamMember.Team.Event == Event
-            //           select teamMember).AnyAsync())
-
-            //var assignedClasses = await (from teamMember in context.TeamMembers
-            //                             where teamMember.Team.Event == Event &&
-            //                             teamMember.Member.);
-
-
-            return null;
+            return new Tuple<bool, string>(true, "");
         }
     }
 }
