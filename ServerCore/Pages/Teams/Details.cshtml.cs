@@ -53,6 +53,10 @@ namespace ServerCore.Pages.Teams
         public string NewLunch { get; set; }
         public static string[] LunchOptions { get; set; }
 
+        public List<PlayerClass> AvailablePlayerClasses { get; set; }
+        public SelectList AvailablePlayerClassesSelectList { get; set; }
+        public int PlayerClassID {get; set;}
+
         private async Task<(bool passed, IActionResult redirect)> AuthChecks(int teamId)
         {
             // Force the user to log in
@@ -163,11 +167,13 @@ namespace ServerCore.Pages.Teams
                 TeamRoom = $"{teamRoom.Building}/{teamRoom.Number}({teamRoom.Capacity})";
             }
 
-            // Get the PlayerClasses information if the event uses them
-            //TeamMembers itsMe = _context.TeamMembers.Where(t => t.Team == Team && t.Member == LoggedInUser).FirstOrDefault();
-            //itsMe.Class = _context.PlayerClasses.FirstOrDefault();
-            //await _context.SaveChangesAsync();
-            var availableClasses = GetAvailableClasses(_context, Event.ID, teamId);
+            // Pull PlayerClass data if the event uses it
+            if (Event.HasPlayerClasses)
+            {
+                // Get the PlayerClasses information for the available classes dropdown
+                AvailablePlayerClasses = await TeamHelper.GetAvailableClasses(_context, Event.ID, teamId);
+                AvailablePlayerClassesSelectList = new SelectList(AvailablePlayerClasses, nameof(PlayerClass.ID), nameof(PlayerClass.Name));
+            }
 
             return Page();
         }
@@ -358,17 +364,6 @@ namespace ServerCore.Pages.Teams
             }
 
             return RedirectToPage("./Details", new { teamId = teamId });
-        }
-
-        private List<PlayerClass> GetAvailableClasses(PuzzleServerContext context, int eventId, int teamId)
-        {
-            var allClasses = context.PlayerClasses.Where(c => c.EventID == eventId);
-            var assignedClasses = context.TeamMembers.Where(tm => tm.Team.ID == teamId).Select(tm => tm.Class);
-            List<PlayerClass> unassignedClasses = allClasses.Except(assignedClasses).ToList();
-            return unassignedClasses;
-
-            // List<PlayerClass> classesOnTeam = context.TeamMembers.Where(u => u.ID == context.PlayerInEvent.Where(p => p.PlayerId == ))
-            //throw new NotImplementedException();
         }
     }
 }

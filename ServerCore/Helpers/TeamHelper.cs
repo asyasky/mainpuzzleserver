@@ -422,6 +422,19 @@ namespace ServerCore.Helpers
         /// <returns>A single PlayerClass that has not been assigned to any players on the given team</returns>
         public static async Task<PlayerClass> GetRandomPlayerClassFromAvailable(PuzzleServerContext context, int eventId, EventRole eventRole, int teamId)
         {
+            var allClasses = await context.PlayerClasses.Where(c => c.EventID == eventId).ToListAsync();
+            var assignedClasses = await context.TeamMembers.Where(tm => tm.Team.ID == teamId).Select(tm => tm.Class).ToListAsync();
+            List<PlayerClass> unassignedClasses = allClasses.Except(assignedClasses).ToList();
+            return unassignedClasses;
+        }
+
+        /// <summary>
+        /// Gets a random PlayerClass from the classes that are currently unassigned on the team
+        /// This overload queries the database to find out which classes are available
+        /// </summary>
+        /// <returns>A single PlayerClass that has not been assigned to any players on the given team</returns>
+        public static async Task<PlayerClass> GetRandomPlayerClassFromAvailable(PuzzleServerContext context, int eventId, int teamId)
+        {
             Team team = await context.Teams.FirstOrDefaultAsync(m => m.ID == teamId);
             if (team == null)
             {
