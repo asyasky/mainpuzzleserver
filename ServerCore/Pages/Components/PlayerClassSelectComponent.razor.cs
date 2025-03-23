@@ -62,6 +62,7 @@ namespace ServerCore.Pages.Components
                 AvailablePlayerClasses = await TeamHelper.GetAvailablePlayerClassesSorted(context, EventId, CurrentUserEventRole, CurrentTeamMember.Team.ID);
             }
 
+            // TODO: Add admin override for all player classes (don't filter to available)
             await base.OnParametersSetAsync();
         }
 
