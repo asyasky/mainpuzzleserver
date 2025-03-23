@@ -5,7 +5,6 @@
 @if (Event != null)
 {
     <InputSelect @bind-Value="SelectedPlayerClassID" @bind-Value:after="UpdatePlayerClassID">
-        <option value="">No player class set</option>
 
         @if (AvailablePlayerClasses != null)
         {
