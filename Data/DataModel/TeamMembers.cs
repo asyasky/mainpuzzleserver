@@ -32,6 +32,6 @@ namespace ServerCore.DataModel
         /// If the player or event has set an override class that applies to the player temporarily
         /// This can be set and unset on the TeamDetails page
         /// </summary>
-      //  public virtual PlayerClass TemporaryClass { get; set; }
+        public virtual PlayerClass TemporaryClass { get; set; }
     }
 }

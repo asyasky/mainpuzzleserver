@@ -70,7 +70,7 @@ namespace ServerCore.Pages.Teams
                     member.Team = mergeIntoTeam;
 
                     // Adjust the PlayerClasses since there are likely to be duplicates
-                    await TeamHelper.AssignRandomPlayerClassFromAvailable(_context, member);
+                    await TeamHelper.AssignRandomPlayerClass(_context, member);
                 }
 
                 // also copy puzzle solves over

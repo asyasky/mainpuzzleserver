@@ -12,7 +12,7 @@ using ServerCore.DataModel;
 namespace Data.Migrations
 {
     [DbContext(typeof(PuzzleServerContext))]
-    [Migration("20250318031157_AddPlayerClass")]
+    [Migration("20250323193309_AddPlayerClass")]
     partial class AddPlayerClass
     {
         /// <inheritdoc />
@@ -1556,6 +1556,9 @@ namespace Data.Migrations
                     b.Property<int>("Team.ID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TemporaryClassID")
+                        .HasColumnType("int");
+
                     b.Property<int>("User.ID")
                         .HasColumnType("int");
 
@@ -1564,6 +1567,8 @@ namespace Data.Migrations
                     b.HasIndex("ClassID");
 
                     b.HasIndex("Team.ID");
+
+                    b.HasIndex("TemporaryClassID");
 
                     b.HasIndex("User.ID");
 
@@ -2143,6 +2148,10 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ServerCore.DataModel.PlayerClass", "TemporaryClass")
+                        .WithMany()
+                        .HasForeignKey("TemporaryClassID");
+
                     b.HasOne("ServerCore.DataModel.PuzzleUser", "Member")
                         .WithMany()
                         .HasForeignKey("User.ID")
@@ -2154,6 +2163,8 @@ namespace Data.Migrations
                     b.Navigation("Member");
 
                     b.Navigation("Team");
+
+                    b.Navigation("TemporaryClass");
                 });
 
             modelBuilder.Entity("ServerCore.DataModel.Puzzle", b =>
