@@ -99,6 +99,27 @@ namespace ServerCore.Helpers
         }
 
         /// <summary>
+        /// Gets the TeamMember object for the given player and event
+        /// </summary>
+        public static async Task<TeamMembers> GetTeamMemberForPlayer(PuzzleServerContext puzzleServerContext, Event thisEvent, int userId)
+        {
+            if (thisEvent == null)
+            {
+                return null;
+            }
+
+            return await puzzleServerContext.TeamMembers.Where(t => t.Member.ID == userId && t.Team.Event.ID == thisEvent.ID).FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Get the PlayerClass associated with a given classId
+        /// </summary>
+        public static async Task<PlayerClass> GetPlayerClassFromID(PuzzleServerContext puzzleServerContext, int classId)
+        {
+            return await puzzleServerContext.PlayerClasses.Where(pc => pc.ID == classId).FirstOrDefaultAsync();
+        }
+
+        /// <summary>
         /// Gets a puzzle user's name with a backing cache
         /// </summary>
         /// <param name="puzzleUserId">The user to get a name for</param>

@@ -333,9 +333,9 @@
                             <td>
                                 @if(Model.Event.HasPlayerClasses)
                                 {
-                                    <select asp-for="PlayerClassID" asp-items="@Model.AvailablePlayerClassesSelectList">
-                                        <option value="">Choose a player class</option>
-                                    </select>
+                                    <div>
+                                        <component type="typeof(ServerCore.Pages.Components.PlayerClassSelectComponent)" render-mode="Server" param-UserId="@item.Member.ID" param-EventId="@Model.Event.ID" />
+                                    </div>
                                 }
                             </td>
                             @if (Model.EventRole == ModelBases.EventRole.admin || Model.Event.IsTeamMembershipChangeActive)
