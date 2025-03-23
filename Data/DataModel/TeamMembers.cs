@@ -27,5 +27,11 @@ namespace ServerCore.DataModel
         /// This is for player categories unique to an event (e.g. character class for an RPG event or region if relevant for an international event)
         /// </summary>
         public virtual PlayerClass Class { get; set; }
+
+        /// <summary>
+        /// If the player or event has set an override class that applies to the player temporarily
+        /// This can be set and unset on the TeamDetails page
+        /// </summary>
+      //  public virtual PlayerClass TemporaryClass { get; set; }
     }
 }
