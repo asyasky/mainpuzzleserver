@@ -1,13 +1,20 @@
 ﻿@if (Event != null)
 {
     <InputSelect @bind-Value="SelectedPlayerClassID" @bind-Value:after="UpdatePlayerClassID">
-        <option value="">No player class set</option>
 
         @if (AvailablePlayerClasses != null)
         {
             @if (CurrentTeamMember != null)
             {
-                <option selected value="@CurrentTeamMember.Class.ID">@CurrentTeamMember.Class.Name</option>
+                @if(CurrentTeamMember.Class == null)
+                {
+                    <option selected value="123456789">No @Event.PlayerClassName set</option>
+                }
+                else
+                {
+                    <option selected value="@CurrentTeamMember.Class.ID">@CurrentTeamMember.Class.Name</option>
+                    <option value="123456789">No @Event.PlayerClassName set</option>
+                }
             }
 
             @foreach (var pc in AvailablePlayerClasses)

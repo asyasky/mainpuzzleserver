@@ -299,6 +299,16 @@
                                     <span>Player Class</span>
                                 }
                             </th>
+                            <th>
+                                @if (Model.Event.PlayerClassName != null)
+                                {
+                                    <span>Temporary @Model.Event.PlayerClassName</span>
+                                }
+                                else
+                                {
+                                    <span>Temporary Player Class</span>
+                                }
+                            </th>
                         }
                         <th></th>
                     </tr>
@@ -334,7 +344,15 @@
                                 @if(Model.Event.HasPlayerClasses)
                                 {
                                     <div>
-                                        <component type="typeof(ServerCore.Pages.Components.PlayerClassSelectComponent)" render-mode="Server" param-UserId="@item.Member.ID" param-EventId="@Model.Event.ID" />
+                                        <component type="typeof(ServerCore.Pages.Components.PlayerClassSelectComponent)" render-mode="Server" param-UserId="@item.Member.ID" param-EventId="@Model.Event.ID" param-CurrentUserEventRole="@Model.EventRole" param-IsTempClass="false" />
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                @if (Model.Event.HasPlayerClasses)
+                                {
+                                    <div>
+                                        <component type="typeof(ServerCore.Pages.Components.PlayerClassSelectComponent)" render-mode="Server" param-UserId="@item.Member.ID" param-EventId="@Model.Event.ID" param-CurrentUserEventRole="@Model.EventRole" param-IsTempClass="true" />
                                     </div>
                                 }
                             </td>

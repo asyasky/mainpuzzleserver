@@ -16,6 +16,12 @@ namespace Data.Migrations
                 type: "int",
                 nullable: true);
 
+            migrationBuilder.AddColumn<int>(
+                name: "TemporaryClassID",
+                table: "TeamMembers",
+                type: "int",
+                nullable: true);
+
             migrationBuilder.AddColumn<string>(
                 name: "EventPassword",
                 table: "Events",
@@ -76,6 +82,11 @@ namespace Data.Migrations
                 column: "ClassID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TeamMembers_TemporaryClassID",
+                table: "TeamMembers",
+                column: "TemporaryClassID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PlayerClasses_EventID",
                 table: "PlayerClasses",
                 column: "EventID");
@@ -84,6 +95,13 @@ namespace Data.Migrations
                 name: "FK_TeamMembers_PlayerClasses_ClassID",
                 table: "TeamMembers",
                 column: "ClassID",
+                principalTable: "PlayerClasses",
+                principalColumn: "ID");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_TeamMembers_PlayerClasses_TemporaryClassID",
+                table: "TeamMembers",
+                column: "TemporaryClassID",
                 principalTable: "PlayerClasses",
                 principalColumn: "ID");
         }
@@ -95,6 +113,10 @@ namespace Data.Migrations
                 name: "FK_TeamMembers_PlayerClasses_ClassID",
                 table: "TeamMembers");
 
+            migrationBuilder.DropForeignKey(
+                name: "FK_TeamMembers_PlayerClasses_TemporaryClassID",
+                table: "TeamMembers");
+
             migrationBuilder.DropTable(
                 name: "PlayerClasses");
 
@@ -102,8 +124,16 @@ namespace Data.Migrations
                 name: "IX_TeamMembers_ClassID",
                 table: "TeamMembers");
 
+            migrationBuilder.DropIndex(
+                name: "IX_TeamMembers_TemporaryClassID",
+                table: "TeamMembers");
+
             migrationBuilder.DropColumn(
                 name: "ClassID",
+                table: "TeamMembers");
+
+            migrationBuilder.DropColumn(
+                name: "TemporaryClassID",
                 table: "TeamMembers");
 
             migrationBuilder.DropColumn(
