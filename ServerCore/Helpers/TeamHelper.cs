@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.IdentityModel.Tokens;
 using ServerCore.DataModel;
 using ServerCore.ModelBases;
 
@@ -449,16 +450,30 @@ namespace ServerCore.Helpers
         /// This function will not assign a PlayerClass if the player already has a class selected and it is available on the given team
         /// </summary>
         /// <param name="member">The TeamMember who needs to be assigned a PlayerClass</param>
-        public static async Task AssignRandomPlayerClass(PuzzleServerContext context, TeamMembers member)
+        public static async Task AssignRandomPlayerClass(PuzzleServerContext context, TeamMembers member, Event currentEvent, EventRole eventRole)
         {
             List<PlayerClass> availableClasses = await GetUnassignedPlayerClasses(context, member.Team.EventID, member.Team.ID);
 
             // Don't change their class if they already have one and no one else on the team does
             // This is needed for team merging logic, to prevent changing the class the player picked unless necessary
-            if (member.Class == null || !availableClasses.Contains(member.Class))
+            if (member.Class != null && availableClasses.Contains(member.Class))
+            {
+                return;
+            }
+
+            if (member.Class == null && eventRole == EventRole.admin && availableClasses.IsNullOrEmpty())
+            {
+                // Admins can set multiple players to the same class, so pick any random class
+                // If this feature gets a lot of use we'll want to make sure the additional players are distributed,
+                // but in most cases there won't be more than one or two extra players so it's not a likely case
+                member.Class = GetRandomPlayerClassFromAvailable(await GetAllPlayerClassesSorted(context, currentEvent.ID));
+            }
+            else
             {
                 member.Class = GetRandomPlayerClassFromAvailable(availableClasses);
             }
+
+            await SetPlayerClass(context, currentEvent, eventRole, member, member.Class.ID);
         }
 
         /// <summary>
@@ -499,6 +514,7 @@ namespace ServerCore.Helpers
                     {
                         List<PlayerClass> availableClasses = await GetAvailablePlayerClasses(context, currentEvent.ID, eventRole, member.Team.ID);
 
+                        // Only one player per team can have a class unless an admin is the one assigning it
                         if (!availableClasses.Contains(playerClass) && eventRole != EventRole.admin)
                         {
                             return new Tuple<bool, string>(false, $"Sorry, {playerClass.Name} is already assigned for this team. Please select another {currentEvent.PlayerClassName}!");
