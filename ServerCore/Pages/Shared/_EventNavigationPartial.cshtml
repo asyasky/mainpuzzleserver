@@ -53,6 +53,11 @@
                             <ul class="dropdown-menu admin-menu">
                                 <li><a class="dropdown-item" asp-page="/EventSpecific/Index">Home</a></li>
                                 <li><a class="dropdown-item" asp-page="/Events/Details">Details</a></li>
+                                @if (Event.HasPlayerClasses)
+
+                                {
+                                    <li><a class="dropdown-item" asp-page="/Events/PlayerClass">Player Classes</a></li>
+                                }
                             </ul>
                         </div>
                     </li>
