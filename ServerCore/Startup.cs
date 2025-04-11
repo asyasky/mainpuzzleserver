@@ -221,9 +221,7 @@ namespace ServerCore
             {
                 endpoints.MapRazorComponents<App>()
                     .AddInteractiveServerRenderMode()
-                    .AddInteractiveWebAssemblyRenderMode()
-                    .AddAdditionalAssemblies(typeof(ClientSyncComponent.Client._Imports).Assembly);
-
+                    .AddInteractiveWebAssemblyRenderMode();
                 endpoints.MapHub<ServerMessageHub>("/serverMessage");
             });
 

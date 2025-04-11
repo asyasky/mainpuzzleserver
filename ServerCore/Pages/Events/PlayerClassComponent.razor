@@ -5,7 +5,7 @@
 
         <input type="hidden" @bind="EventID" />
         <div class="form-group">
-<label>
+            <label>
                 Enter a name for this player class
                 <input @bind="ClassName" class="form-control" />
             </label>
@@ -14,40 +14,40 @@
             <label>
                 Enter the relative order for this class
                 <input @bind="ClassOrder" class="form-control" />
-</label>
+            </label>
         </div>
 
         <button @onclick="async () => await OnAddClick()">Add</button>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
                         Order
-            </th>
+                    </th>
                     <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in PlayerClasses)
-        {
-            <tr>
-                <td>
-                    @item.Name
-                </td>
-                <td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in PlayerClasses)
+                {
+                    <tr>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
                             @item.Order
                         </td>
                         <td>
                             <button @onclick="async () => await OnDeleteClick(item.ID)">Delete</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
     </div>
 </div>
