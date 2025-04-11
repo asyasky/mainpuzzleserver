@@ -208,9 +208,11 @@
                         </dd>
                     }
 
-                    @if (Model.Event.HasPlayerClasses)
+                    @if (Model.Event.HasPlayerClasses && Model.EventRole != ModelBases.EventRole.admin)
                     {
                         <dt>
+                            <br /><br />
+
                             @if (Model.Event.PlayerClassName != null)
                             {
                                 <span>Temporary @Model.Event.PlayerClassName</span>
