@@ -422,61 +422,6 @@ namespace ServerCore.Helpers
         /// <returns>A single PlayerClass that has not been assigned to any players on the given team</returns>
         public static async Task<PlayerClass> GetRandomPlayerClassFromAvailable(PuzzleServerContext context, int eventId, EventRole eventRole, int teamId)
         {
-            var allClasses = await context.PlayerClasses.Where(c => c.EventID == eventId).ToListAsync();
-            var assignedClasses = await context.TeamMembers.Where(tm => tm.Team.ID == teamId).Select(tm => tm.Class).ToListAsync();
-            List<PlayerClass> unassignedClasses = allClasses.Except(assignedClasses).ToList();
-            return unassignedClasses;
-        }
-
-        /// <summary>
-        /// Gets a list of the PlayerClasses that can be assigned to a player on a given team.
-        /// If the user is an admin then the list contains all classes (allowing the admin to assign multiple players to the same class if needed).
-        /// If the list is going to be used for Temporary Classes then it contains all classes (since multiple players can pick the same temporary class).
-        /// Otherwise the list contains only the unassigned classes.
-        /// </summary>
-        /// <returns>A list of all unassigned PlayerClasses</returns>
-        public static async Task<List<PlayerClass>> GetAvailablePlayerClasses(PuzzleServerContext context, int eventId, EventRole eventRole, int teamId)
-        {
-            if (eventRole != EventRole.admin)
-            {
-                List<PlayerClass> unassignedClasses = await GetUnassignedPlayerClasses(context, eventId, teamId);
-                return unassignedClasses;
-            }
-
-            List<PlayerClass> allClasses = await context.PlayerClasses.Where(c => c.EventID == eventId).ToListAsync();
-            return allClasses;
-        }
-
-        /// <summary>
-        /// Gets a list of the PlayerClasses that can be assigned to a player on a given team, sorted by Order.
-        /// If the user is an admin then the list contains all classes (allowing the admin to assign multiple players to the same class if needed).
-        /// If the list is going to be used for Temporary Classes then it contains all classes (since multiple players can pick the same temporary class).
-        /// Otherwise the list contains only the unassigned classes.
-        /// This is intended for UI elements that don't sort for display and need pre-ordered data inputs.
-        /// </summary>
-        public static async Task<List<PlayerClass>> GetAvailablePlayerClassesSorted(PuzzleServerContext context, int eventId, EventRole eventRole, int teamId)
-        {
-            List<PlayerClass> availableClasses = await GetAvailablePlayerClasses(context, eventId, eventRole, teamId);
-            availableClasses = availableClasses.OrderBy(pc => pc.Order).ToList();
-            return availableClasses;
-        }
-
-        /// <summary>
-        /// Gets the complete list of PlayerClasses for the given event, sorted by Order
-        /// </summary>
-        public static async Task<List<PlayerClass>> GetAllPlayerClassesSorted(PuzzleServerContext context, int eventId)
-        {
-            List<PlayerClass> allClasses = await context.PlayerClasses.Where(c => c.EventID == eventId).OrderBy(pc => pc.Order).ToListAsync();
-            return allClasses;
-        }
-
-        /// <summary>
-        /// Gets a random PlayerClass from the classes that are currently unassigned on the team
-        /// This overload queries the database to find out which classes are available
-        /// </summary>
-        /// <returns>A single PlayerClass that has not been assigned to any players on the given team</returns>
-        public static async Task<PlayerClass> GetRandomPlayerClassFromAvailable(PuzzleServerContext context, int eventId, EventRole eventRole, int teamId)
-        {
             Team team = await context.Teams.FirstOrDefaultAsync(m => m.ID == teamId);
             if (team == null)
             {

@@ -356,42 +356,6 @@ namespace ServerCore.DataModel
        public int FastestSyncIntervalMs { get; set; }
 
         /// <summary>
-        /// True if this is an alpha testing event (meaning authors can mark puzzles for testing)
-        /// </summary>
-        public bool IsAlphaTestingEvent { get; set; }
-
-        /// <summary>
-        /// True if the event uses the PlayerClass system to assign classes to individual players
-        /// PlayerClassName should also be set in this case, otherwise the display name will be "Player Class"
-        /// </summary>
-        public bool HasPlayerClasses { get; set; }
-
-        /// <summary>
-        /// Determines the display name for PlayerClasses (e.g. Class, Job, Color, Duty Assignment)
-        /// </summary>
-        public string PlayerClassName { get; set; }
-
-        /// <summary>
-        /// True if the players can change their own PlayerClass (admins can always make changes)
-        /// Currently locks PlayerClass changes when the event starts (add additional logic if needed for future events)
-        /// </summary>
-        [NotMapped]
-        public bool CanChangePlayerClass
-        {
-            get { return !EventHasStarted; }
-        }
-
-        /// <summary>
-        /// Used to confirm the validity of external API requests for event-wide actions
-        /// This is a GUID by default unless there is a good reason to use something else
-        /// </summary>
-        public string EventPassword { get; set; }
-
-        // Morgan TODO: Add descriptions for these properties
-       public bool PuzzleSyncEnabled { get; set; }
-       public int FastestSyncIntervalMs { get; set; }
-
-        /// <summary>
         /// Short-term hacks for modifying behavior without adding new properties all the time.
         /// Note: If a hack lasts more than a few months, it should probably be promoted to a real property.
         /// </summary>
