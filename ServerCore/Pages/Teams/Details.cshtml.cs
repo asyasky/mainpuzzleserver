@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using ServerCore.DataModel;
 using ServerCore.Helpers;
 using ServerCore.ModelBases;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ServerCore.Pages.Teams
 {

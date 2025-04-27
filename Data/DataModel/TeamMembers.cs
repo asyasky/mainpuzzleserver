@@ -29,8 +29,8 @@ namespace ServerCore.DataModel
         public virtual PlayerClass Class { get; set; }
 
         /// <summary>
-        /// If the player or event has set an override class that applies to the player temporarily
-        /// This can be set and unset on the TeamDetails page
+        /// If the player or event allows an override class that applies to the player temporarily
+        /// This can be set and unset by the player on the TeamDetails page
         /// </summary>
         public virtual PlayerClass TemporaryClass { get; set; }
     }

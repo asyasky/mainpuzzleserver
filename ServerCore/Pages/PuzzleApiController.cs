@@ -121,15 +121,19 @@ namespace ServerCore.Pages
         }
 
         [HttpPost]
-        [Authorize(Policy = "IsEventAdmin")]
         [Route("api/puzzleapi/submitanswer/{eventId}/{puzzleId}/{userId}")]
-        public async Task<SubmissionResponse> PostSubmitAnswerAdminAsync([FromBody] AnswerSubmission submission, [FromRoute] string eventId, [FromRoute] int puzzleId, [FromRoute] string userId)
+        public async Task<ActionResult<SubmissionResponse>> PostSubmitAnswerAdminAsync([FromBody] AnswerSubmission submission, [FromRoute] string eventId, [FromRoute] int puzzleId, [FromRoute] string userId, [FromBody] string eventPassword)
         {
             Event currentEvent = await EventHelper.GetEventFromEventId(context, eventId);
 
-            PuzzleUser user = await PuzzleUser.GetPuzzleUser(userId, context);
+            if (IsValidEventPassword(currentEvent, eventPassword))
+            {
+                PuzzleUser user = await PuzzleUser.GetPuzzleUser(userId, context);
 
-            return await SubmissionEvaluator.EvaluateSubmission(context, user, currentEvent, puzzleId, submission.SubmissionText, submission.AllowFreeformSharing);
+                return await SubmissionEvaluator.EvaluateSubmission(context, user, currentEvent, puzzleId, submission.SubmissionText, submission.AllowFreeformSharing);
+            }
+
+            return Unauthorized();
         }
 
         [HttpPost]
@@ -139,6 +143,19 @@ namespace ServerCore.Pages
             Event currentEvent = await EventHelper.GetEventFromEventId(context, eventId);
 
            await LiveEventHelper.TriggerNotifications(context, currentEvent, timerWindow, hubContext);
+        }
+
+        /// <summary>
+        /// Allows an external service to authenticate as an admin for the event
+        /// </summary>
+        private bool IsValidEventPassword(Event currentEvent, string eventPassword)
+        {
+            if (string.IsNullOrWhiteSpace(eventPassword))
+            {
+                return false;
+            }
+
+            return currentEvent.EventPassword == eventPassword;
         }
     }
 
