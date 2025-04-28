@@ -1,6 +1,5 @@
-﻿@using ServerCore.DataModel
-
-@inherits OwningComponentBase<PuzzleServerContext>
+﻿@using Microsoft.EntityFrameworkCore
+@using ServerCore.DataModel
 
 @if (Event != null)
 {
@@ -8,15 +7,15 @@
 
         @if (AvailablePlayerClasses != null)
         {
-            @if (CurrentTeamMember != null)
+            @if (CurrentTeamMemberDisplayPlayerClass != null)
             {
-                @if(CurrentTeamMember.Class == null)
+                @if(CurrentTeamMemberDisplayPlayerClass.ClassId == 123456789)
                 {
                     <option value="123456789">No @Event.PlayerClassName set</option>
                 }
                 else
                 {
-                    <option value="@CurrentTeamMember.Class.ID">@CurrentTeamMember.Class.Name</option>
+                    <option value="@CurrentTeamMemberDisplayPlayerClass.ClassId">@CurrentTeamMemberDisplayPlayerClass.Name</option>
                     <option value="123456789">No @Event.PlayerClassName set</option>
                 }
             }
