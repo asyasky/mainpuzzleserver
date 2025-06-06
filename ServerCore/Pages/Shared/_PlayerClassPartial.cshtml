@@ -1,0 +1,21 @@
+﻿@using ServerCore.DataModel
+@using ServerCore.Helpers
+@inject PuzzleServerContext puzzleServerContext
+
+@{
+    var EventModel = Model as ServerCore.ModelBases.EventSpecificPageModel;
+
+    if (EventModel != null)
+    {
+        if (EventModel.Event.HasPlayerClasses)
+        {
+            TeamMembers member = await UserEventHelper.GetTeamMemberForPlayer(puzzleServerContext, EventModel.Event, EventModel.LoggedInUser.ID);
+            PlayerClass playerClass = PlayerClassHelper.GetActiveClassForPlayer(EventModel.Event, member);
+
+            <ul class="navbar-nav">
+                <li class="nav-item">@playerClass.Name</li>
+                <li class="nav-item"><a asp-page="/Team/Details">@EventModel.Event.PlayerClassName Override</a></li>
+            </ul>
+        }
+    }        
+ }   
