@@ -1,0 +1,115 @@
+@page "/liveevents/delete"
+@using Microsoft.EntityFrameworkCore
+@using ServerCore.DataModel
+@inject IDbContextFactory<ServerCore.DataModel.PuzzleServerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>LiveEvent</h2>
+    <hr />
+    @if (liveevent is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">AssociatedPuzzleId</dt>
+            <dd class="col-sm-10">@liveevent.AssociatedPuzzleId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@liveevent.Name</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">AssociatedPuzzle</dt>
+            <dd class="col-sm-10">@liveevent.AssociatedPuzzle</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Location</dt>
+            <dd class="col-sm-10">@liveevent.Location</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">EventEndTimeUtc</dt>
+            <dd class="col-sm-10">@liveevent.EventEndTimeUtc</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@liveevent.Description</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">EventStartTimeUtc</dt>
+            <dd class="col-sm-10">@liveevent.EventStartTimeUtc</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">EventIsScheduled</dt>
+            <dd class="col-sm-10">@liveevent.EventIsScheduled</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">NumberOfInstances</dt>
+            <dd class="col-sm-10">@liveevent.NumberOfInstances</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">TimePerSlot</dt>
+            <dd class="col-sm-10">@liveevent.TimePerSlot</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">TeamsPerSlot</dt>
+            <dd class="col-sm-10">@liveevent.TeamsPerSlot</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">OpeningReminderOffset</dt>
+            <dd class="col-sm-10">@liveevent.OpeningReminderOffset</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ClosingReminderOffset</dt>
+            <dd class="col-sm-10">@liveevent.ClosingReminderOffset</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">FirstReminderOffset</dt>
+            <dd class="col-sm-10">@liveevent.FirstReminderOffset</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">LastReminderOffset</dt>
+            <dd class="col-sm-10">@liveevent.LastReminderOffset</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">LastNotifiedAllTeamsUtc</dt>
+            <dd class="col-sm-10">@liveevent.LastNotifiedAllTeamsUtc</dd>
+        </dl>
+        <EditForm method="post" Model="liveevent" OnValidSubmit="DeleteLiveEvent" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(liveevent is null)">Delete</button> |
+            <a href="/liveevents">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private LiveEvent? liveevent;
+
+    [SupplyParameterFromQuery]
+    private int ID { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        liveevent = await context.LiveEvents.FirstOrDefaultAsync(m => m.ID == ID);
+
+        if (liveevent is null)
+        {
+            NavigationManager.NotFound();
+        }
+    }
+
+    private async Task DeleteLiveEvent()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.LiveEvents.Remove(liveevent!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/liveevents");
+    }
+}

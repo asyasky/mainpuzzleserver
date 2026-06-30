@@ -1,0 +1,76 @@
+@page "/liveevents/details"
+@using Microsoft.EntityFrameworkCore
+@using ServerCore.DataModel
+@inject IDbContextFactory<ServerCore.DataModel.PuzzleServerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>LiveEvent</h2>
+    <hr />
+    @if (liveevent is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">AssociatedPuzzleId</dt>
+            <dd class="col-sm-10">@liveevent.AssociatedPuzzleId</dd>
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@liveevent.Name</dd>
+            <dt class="col-sm-2">AssociatedPuzzle</dt>
+            <dd class="col-sm-10">@liveevent.AssociatedPuzzle</dd>
+            <dt class="col-sm-2">Location</dt>
+            <dd class="col-sm-10">@liveevent.Location</dd>
+            <dt class="col-sm-2">EventEndTimeUtc</dt>
+            <dd class="col-sm-10">@liveevent.EventEndTimeUtc</dd>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@liveevent.Description</dd>
+            <dt class="col-sm-2">EventStartTimeUtc</dt>
+            <dd class="col-sm-10">@liveevent.EventStartTimeUtc</dd>
+            <dt class="col-sm-2">EventIsScheduled</dt>
+            <dd class="col-sm-10">@liveevent.EventIsScheduled</dd>
+            <dt class="col-sm-2">NumberOfInstances</dt>
+            <dd class="col-sm-10">@liveevent.NumberOfInstances</dd>
+            <dt class="col-sm-2">TimePerSlot</dt>
+            <dd class="col-sm-10">@liveevent.TimePerSlot</dd>
+            <dt class="col-sm-2">TeamsPerSlot</dt>
+            <dd class="col-sm-10">@liveevent.TeamsPerSlot</dd>
+            <dt class="col-sm-2">OpeningReminderOffset</dt>
+            <dd class="col-sm-10">@liveevent.OpeningReminderOffset</dd>
+            <dt class="col-sm-2">ClosingReminderOffset</dt>
+            <dd class="col-sm-10">@liveevent.ClosingReminderOffset</dd>
+            <dt class="col-sm-2">FirstReminderOffset</dt>
+            <dd class="col-sm-10">@liveevent.FirstReminderOffset</dd>
+            <dt class="col-sm-2">LastReminderOffset</dt>
+            <dd class="col-sm-10">@liveevent.LastReminderOffset</dd>
+            <dt class="col-sm-2">LastNotifiedAllTeamsUtc</dt>
+            <dd class="col-sm-10">@liveevent.LastNotifiedAllTeamsUtc</dd>
+        </dl>
+        <div>
+            <a href="@($"/liveevents/edit?id={liveevent.ID}")">Edit</a> |
+            <a href="@($"/liveevents")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private LiveEvent? liveevent;
+
+    [SupplyParameterFromQuery]
+    private int ID { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        liveevent = await context.LiveEvents.FirstOrDefaultAsync(m => m.ID == ID);
+
+        if (liveevent is null)
+        {
+            NavigationManager.NotFound();
+        }
+    }
+}

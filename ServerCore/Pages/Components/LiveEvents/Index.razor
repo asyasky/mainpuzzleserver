@@ -1,0 +1,51 @@
+@page "/liveevents"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+@using ServerCore.DataModel
+@implements IAsyncDisposable
+@inject IDbContextFactory<ServerCore.DataModel.PuzzleServerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="liveevents/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.LiveEvents">
+    <PropertyColumn Property="liveevent => liveevent.AssociatedPuzzleId" />
+    <PropertyColumn Property="liveevent => liveevent.Name" />
+    <PropertyColumn Property="liveevent => liveevent.AssociatedPuzzle" />
+    <PropertyColumn Property="liveevent => liveevent.Location" />
+    <PropertyColumn Property="liveevent => liveevent.EventEndTimeUtc" />
+    <PropertyColumn Property="liveevent => liveevent.Description" />
+    <PropertyColumn Property="liveevent => liveevent.EventStartTimeUtc" />
+    <PropertyColumn Property="liveevent => liveevent.EventIsScheduled" />
+    <PropertyColumn Property="liveevent => liveevent.NumberOfInstances" />
+    <PropertyColumn Property="liveevent => liveevent.TimePerSlot" />
+    <PropertyColumn Property="liveevent => liveevent.TeamsPerSlot" />
+    <PropertyColumn Property="liveevent => liveevent.OpeningReminderOffset" />
+    <PropertyColumn Property="liveevent => liveevent.ClosingReminderOffset" />
+    <PropertyColumn Property="liveevent => liveevent.FirstReminderOffset" />
+    <PropertyColumn Property="liveevent => liveevent.LastReminderOffset" />
+    <PropertyColumn Property="liveevent => liveevent.LastNotifiedAllTeamsUtc" />
+
+    <TemplateColumn Context="liveevent">
+        <a href="@($"liveevents/edit?id={liveevent.ID}")">Edit</a> |
+        <a href="@($"liveevents/details?id={liveevent.ID}")">Details</a> |
+        <a href="@($"liveevents/delete?id={liveevent.ID}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private PuzzleServerContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

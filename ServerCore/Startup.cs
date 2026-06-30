@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -131,6 +132,7 @@ namespace ServerCore
             services.AddScoped<BackgroundFileUploader>();
             services.AddScoped<AuthorizationHelper>();
             services.AddScoped<ServerCore.Pages.Threads.PuzzleThreadService>();
+            services.AddQuickGridEntityFrameworkAdapter();
 
             var signalRBuilder = services.AddSignalR();
 

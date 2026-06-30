@@ -1,0 +1,127 @@
+@page "/liveevents/create"
+@using Microsoft.EntityFrameworkCore
+@using ServerCore.DataModel
+@inject IDbContextFactory<ServerCore.DataModel.PuzzleServerContext> DbFactory
+@inject NavigationManager NavigationManager
+@namespace ServerCore.Pages.Components.LiveEvents
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>LiveEvent</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="LiveEvent" OnValidSubmit="AddLiveEvent" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <span class="text-danger">*</span>
+                <label for="associatedpuzzleid" class="form-label">AssociatedPuzzleId:</label> 
+                <InputNumber id="associatedpuzzleid" @bind-Value="LiveEvent.AssociatedPuzzleId" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => LiveEvent.AssociatedPuzzleId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <span class="text-danger">*</span>
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="LiveEvent.Name" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => LiveEvent.Name" class="text-danger" /> 
+            </div>        
+@*             <div class="mb-3">
+                <span class="text-danger">*</span>
+                <label for="associatedpuzzle" class="form-label">AssociatedPuzzle:</label> 
+                <InputText id="associatedpuzzle" @bind-Value="LiveEvent.AssociatedPuzzle" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => LiveEvent.AssociatedPuzzle" class="text-danger" /> 
+            </div>   *@      
+            <div class="mb-3">
+                <span class="text-danger">*</span>
+                <label for="location" class="form-label">Location:</label> 
+                <InputText id="location" @bind-Value="LiveEvent.Location" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => LiveEvent.Location" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <span class="text-danger">*</span>
+                <label for="eventendtimeutc" class="form-label">EventEndTimeUtc:</label> 
+                <InputDate id="eventendtimeutc" @bind-Value="LiveEvent.EventEndTimeUtc" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => LiveEvent.EventEndTimeUtc" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label> 
+                <InputText id="description" @bind-Value="LiveEvent.Description" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.Description" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="eventstarttimeutc" class="form-label">EventStartTimeUtc:</label> 
+                <InputDate id="eventstarttimeutc" @bind-Value="LiveEvent.EventStartTimeUtc" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.EventStartTimeUtc" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="eventisscheduled" class="form-label">EventIsScheduled:</label> 
+                <InputCheckbox id="eventisscheduled" @bind-Value="LiveEvent.EventIsScheduled" class="form-check-input" /> 
+                <ValidationMessage For="() => LiveEvent.EventIsScheduled" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="numberofinstances" class="form-label">NumberOfInstances:</label> 
+                <InputNumber id="numberofinstances" @bind-Value="LiveEvent.NumberOfInstances" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.NumberOfInstances" class="text-danger" /> 
+            </div>        
+@*             <div class="mb-3">
+                <label for="timeperslot" class="form-label">TimePerSlot:</label> 
+                <InputText id="timeperslot" @bind-Value="LiveEvent.TimePerSlot" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.TimePerSlot" class="text-danger" /> 
+            </div>  *@       
+            <div class="mb-3">
+                <label for="teamsperslot" class="form-label">TeamsPerSlot:</label> 
+                <InputNumber id="teamsperslot" @bind-Value="LiveEvent.TeamsPerSlot" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.TeamsPerSlot" class="text-danger" /> 
+             </div>          
+             @*           <div class="mb-3">
+                <label for="openingreminderoffset" class="form-label">OpeningReminderOffset:</label> 
+                <InputText id="openingreminderoffset" @bind-Value="LiveEvent.OpeningReminderOffset" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.OpeningReminderOffset" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="closingreminderoffset" class="form-label">ClosingReminderOffset:</label> 
+                <InputText id="closingreminderoffset" @bind-Value="LiveEvent.ClosingReminderOffset" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.ClosingReminderOffset" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="firstreminderoffset" class="form-label">FirstReminderOffset:</label> 
+                <InputText id="firstreminderoffset" @bind-Value="LiveEvent.FirstReminderOffset" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.FirstReminderOffset" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="lastreminderoffset" class="form-label">LastReminderOffset:</label> 
+                <InputText id="lastreminderoffset" @bind-Value="LiveEvent.LastReminderOffset" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.LastReminderOffset" class="text-danger" /> 
+            </div>    *@     
+            <div class="mb-3">
+                <label for="lastnotifiedallteamsutc" class="form-label">LastNotifiedAllTeamsUtc:</label> 
+                <InputDate id="lastnotifiedallteamsutc" @bind-Value="LiveEvent.LastNotifiedAllTeamsUtc" class="form-control" /> 
+                <ValidationMessage For="() => LiveEvent.LastNotifiedAllTeamsUtc" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/liveevents">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private LiveEvent LiveEvent { get; set; } = default!;
+
+    protected override void OnInitialized() => LiveEvent ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddLiveEvent()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.LiveEvents.Add(LiveEvent);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/liveevents");
+    }
+}
