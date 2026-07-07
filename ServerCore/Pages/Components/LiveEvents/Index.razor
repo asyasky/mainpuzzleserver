@@ -1,4 +1,4 @@
-@page "/liveevents"
+
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 @using ServerCore.DataModel
@@ -17,7 +17,6 @@
 <QuickGrid Class="table" Items="context.LiveEvents">
     <PropertyColumn Property="liveevent => liveevent.AssociatedPuzzleId" />
     <PropertyColumn Property="liveevent => liveevent.Name" />
-    <PropertyColumn Property="liveevent => liveevent.AssociatedPuzzle" />
     <PropertyColumn Property="liveevent => liveevent.Location" />
     <PropertyColumn Property="liveevent => liveevent.EventEndTimeUtc" />
     <PropertyColumn Property="liveevent => liveevent.Description" />

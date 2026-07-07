@@ -1,4 +1,4 @@
-@page "/liveevents/edit"
+@page "/{eventId}/{eventRole}/Events/LiveEventManagement/edit"
 @using Microsoft.EntityFrameworkCore
 @using ServerCore.DataModel
 @inject IDbContextFactory<ServerCore.DataModel.PuzzleServerContext> DbFactory
@@ -30,16 +30,10 @@ else
                 </div>
                 <div class="mb-3">
                 <span class="text-danger">*</span>
-                    <label for="name" class="form-label">Name:</label>
+                    <label for="name" class="form-label">Puzzle Name:</label>
                     <InputText id="name" @bind-Value="LiveEvent.Name" class="form-control" aria-required="true"/>
                     <ValidationMessage For="() => LiveEvent.Name" class="text-danger" />
                 </div>
-@*                 <div class="mb-3">
-                <span class="text-danger">*</span>
-                    <label for="associatedpuzzle" class="form-label">AssociatedPuzzle:</label>
-                    <InputText id="associatedpuzzle" @bind-Value="LiveEvent.AssociatedPuzzle" class="form-control" aria-required="true"/>
-                    <ValidationMessage For="() => LiveEvent.AssociatedPuzzle" class="text-danger" />
-                </div> *@
                 <div class="mb-3">
                 <span class="text-danger">*</span>
                     <label for="location" class="form-label">Location:</label>
@@ -103,9 +97,7 @@ else
                     <ValidationMessage For="() => LiveEvent.LastReminderOffset" class="text-danger" />
                 </div> *@
                 <div class="mb-3">
-                    <label for="lastnotifiedallteamsutc" class="form-label">LastNotifiedAllTeamsUtc:</label>
-                    <InputDate id="lastnotifiedallteamsutc" @bind-Value="LiveEvent.LastNotifiedAllTeamsUtc" class="form-control" />
-                    <ValidationMessage For="() => LiveEvent.LastNotifiedAllTeamsUtc" class="text-danger" />
+                    <InputDate id="lastnotifiedallteamsutc" @bind-Value="LiveEvent.LastNotifiedAllTeamsUtc" class="hidden" />
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
@@ -114,7 +106,7 @@ else
 }
 
 <div>
-    <a href="/liveevents">Back to List</a>
+@*     <a href="@($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement")">Back to List</a> *@
 </div>
 
 @code {
@@ -158,7 +150,7 @@ else
             }
         }
 
-        NavigationManager.NavigateTo("/liveevents");
+        // NavigationManager.NavigateTo($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement");
     }
 
     private bool LiveEventExists(int id)

@@ -1,10 +1,10 @@
-@page "/liveevents/details"
+@page "/{eventId}/{eventRole}/Events/LiveEventManagement/details"
 @using Microsoft.EntityFrameworkCore
 @using ServerCore.DataModel
 @inject IDbContextFactory<ServerCore.DataModel.PuzzleServerContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Details</PageTitle>
+<PageTitle>Live Event Details</PageTitle>
 
 <h1>Details</h1>
 
@@ -21,8 +21,6 @@
             <dd class="col-sm-10">@liveevent.AssociatedPuzzleId</dd>
             <dt class="col-sm-2">Name</dt>
             <dd class="col-sm-10">@liveevent.Name</dd>
-            <dt class="col-sm-2">AssociatedPuzzle</dt>
-            <dd class="col-sm-10">@liveevent.AssociatedPuzzle</dd>
             <dt class="col-sm-2">Location</dt>
             <dd class="col-sm-10">@liveevent.Location</dd>
             <dt class="col-sm-2">EventEndTimeUtc</dt>
@@ -51,8 +49,8 @@
             <dd class="col-sm-10">@liveevent.LastNotifiedAllTeamsUtc</dd>
         </dl>
         <div>
-            <a href="@($"/liveevents/edit?id={liveevent.ID}")">Edit</a> |
-            <a href="@($"/liveevents")">Back to List</a>
+@*             <a href="@($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement/editid={liveevent.ID}")">Edit</a> |
+            <a href="@($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement")">Back to List</a> *@
         </div>
     }
 </div>

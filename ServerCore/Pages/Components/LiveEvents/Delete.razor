@@ -1,4 +1,4 @@
-@page "/liveevents/delete"
+@page "/{eventId}/{eventRole}/Events/LiveEventManagement/delete"
 @using Microsoft.EntityFrameworkCore
 @using ServerCore.DataModel
 @inject IDbContextFactory<ServerCore.DataModel.PuzzleServerContext> DbFactory
@@ -24,10 +24,6 @@
         <dl class="row">
             <dt class="col-sm-2">Name</dt>
             <dd class="col-sm-10">@liveevent.Name</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">AssociatedPuzzle</dt>
-            <dd class="col-sm-10">@liveevent.AssociatedPuzzle</dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">Location</dt>
@@ -81,10 +77,10 @@
             <dt class="col-sm-2">LastNotifiedAllTeamsUtc</dt>
             <dd class="col-sm-10">@liveevent.LastNotifiedAllTeamsUtc</dd>
         </dl>
-        <EditForm method="post" Model="liveevent" OnValidSubmit="DeleteLiveEvent" FormName="delete" Enhance>
+@*         <EditForm method="post" Model="liveevent" OnValidSubmit="DeleteLiveEvent" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(liveevent is null)">Delete</button> |
-            <a href="/liveevents">Back to List</a>
-        </EditForm>
+            <a href="@($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement")">Back to List</a>
+        </EditForm> *@
     }
 </div>
 
@@ -110,6 +106,6 @@
         using var context = DbFactory.CreateDbContext();
         context.LiveEvents.Remove(liveevent!);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/liveevents");
+        // NavigationManager.NavigateTo($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement");
     }
 }

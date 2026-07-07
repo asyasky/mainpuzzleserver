@@ -1,14 +1,55 @@
 ﻿@page "/{eventId}/{eventRole}/Events/LiveEventManagement"
+
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.AspNetCore.Components
+@using Microsoft.EntityFrameworkCore
+@using ServerCore.DataModel
+@inject NavigationManager NavigationManager
+
 @model ServerCore.Pages.Events.LiveEventManagementModel
 @{
     ViewData["Title"] = "Live Event Management";
     ViewData["AdminRoute"] = "/Events/LiveEventManagement";
 }
 
-<div>
+
+ <div>
     <component type="typeof(ServerCore.Pages.Events.LiveEventManagementComponent)" render-mode="Server"
                param-EventId="@Model.Event.ID" />
 </div>
-<div>
+@*<div>
     <component type="typeof(ServerCore.Pages.Components.LiveEvents.Create)" render-mode="Server"/>
-</div>
+</div> *@
+
+
+<PageTitle>Live Event Schedule Management</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="@($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement/create")">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.LiveEvents">
+    <PropertyColumn Property="liveevent => liveevent.AssociatedPuzzleId" />
+    <PropertyColumn Property="liveevent => liveevent.Name" />
+    <PropertyColumn Property="liveevent => liveevent.Location" />
+    <PropertyColumn Property="liveevent => liveevent.EventEndTimeUtc" />
+    <PropertyColumn Property="liveevent => liveevent.Description" />
+    <PropertyColumn Property="liveevent => liveevent.EventStartTimeUtc" />
+    <PropertyColumn Property="liveevent => liveevent.EventIsScheduled" />
+    <PropertyColumn Property="liveevent => liveevent.NumberOfInstances" />
+    <PropertyColumn Property="liveevent => liveevent.TimePerSlot" />
+    <PropertyColumn Property="liveevent => liveevent.TeamsPerSlot" />
+    <PropertyColumn Property="liveevent => liveevent.OpeningReminderOffset" />
+    <PropertyColumn Property="liveevent => liveevent.ClosingReminderOffset" />
+    <PropertyColumn Property="liveevent => liveevent.FirstReminderOffset" />
+    <PropertyColumn Property="liveevent => liveevent.LastReminderOffset" />
+    <PropertyColumn Property="liveevent => liveevent.LastNotifiedAllTeamsUtc" />
+
+    <TemplateColumn Context="liveevent">
+        <a href="@($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement/edit?id={liveevent.ID}")">Edit</a> |
+        <a href="@($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement/details?id={liveevent.ID}")">Details</a> |
+        <a href="@($"/{Model.Event.EventID}/{Model.EventRole}/Events/LiveEventManagement/delete?id={liveevent.ID}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
