@@ -186,7 +186,7 @@ namespace ServerCore.Helpers
             // Randomize the team list order so that teams don't get an advantage for early registration or names
             Random seed = new();
 
-            // If the event isn't combining small teams, priotize larger teams for the earlier time slots (but randomize within sizes)
+            // If the event isn't combining small teams, prioritize larger teams for the earlier time slots (but randomize within sizes)
             if (bigTeamsFirst)
             {
                 List<Team> sortedTeamList = new List<Team>();
@@ -215,7 +215,6 @@ namespace ServerCore.Helpers
                 var sortedTeamList = teamList.OrderBy(_ => seed.Next());
                 return sortedTeamList.ToList();
             }
-
         }
 
         /// <summary>
@@ -291,10 +290,10 @@ namespace ServerCore.Helpers
 
             foreach (LiveEvent liveEvent in scheduledEvents)
             {
-                IQueryable<LiveEventSchedule> scheduledTimes = from eventSlot in context.LiveEventsSchedule
+                List<LiveEventSchedule> scheduledTimes = await (from eventSlot in context.LiveEventsSchedule
                                                                where eventSlot.LiveEventId == liveEvent.ID
-                                                               select eventSlot;
-                scheduledTimes = scheduledTimes.OrderBy((slot) => (slot.StartTimeUtc));
+                                                               orderby eventSlot.StartTimeUtc
+                                                               select eventSlot).ToListAsync();
 
                 // Add to the checkin list
                 byEventThenTime.AppendLine(liveEvent.Name);
